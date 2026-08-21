@@ -4,6 +4,34 @@ This repo is **one marketplace, many plugins**. Everyone on the team adds the
 marketplace once; each contribution is a new folder under `plugins/` plus one
 entry in the catalog. You don't need to understand the whole repo to add yours.
 
+## Not an engineer? Start here
+
+The most useful thing you can contribute is usually a **skill** — a plain text file that
+tells Claude how you want something handled. No code. If you've found yourself pasting the
+same instructions into Claude over and over ("when you draft a rejection email, do it like
+this"), that's a skill, and everyone on the team should have it.
+
+A skill is one file that looks like this:
+
+```markdown
+---
+name: rejection-email
+description: Use when drafting a founder rejection email in Iterative's voice.
+---
+
+Keep it under 150 words. Lead with the decision, no throat-clearing.
+Name one specific thing that stood out. Offer to revisit at their next raise.
+Never say "unfortunately" or "at this time".
+```
+
+The `description` line is what tells Claude when to reach for it. Everything under it is just
+your instructions, in your words.
+
+Want it only for yourself first? Drop that file at
+`~/.claude/skills/<name>/SKILL.md` and it works immediately, no install and no repo involved.
+When it's good enough to share, follow the steps below to move it in here — or hand it to
+someone on the team and ask them to wire it up.
+
 ## Plugin vs. skill vs. command — which do I make?
 
 You always ship a **plugin** (that's the installable unit). A plugin is just a

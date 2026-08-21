@@ -1,11 +1,67 @@
-# iterator
+# iterator — ask questions about our deal flow
 
-Claude Code plugin for querying Iterative's **Iterator CRM** — founders, companies,
-applications, cohorts, partner feedback, leads, and portfolio.
+This add-on connects Claude Code to the **Iterator CRM**, so you can ask about founders,
+companies, applications, cohorts, partner feedback, leads and the portfolio in plain English
+and get answers from the live data — not from Claude guessing.
 
-Installed as part of the `iterative` marketplace (see the [repo README](../../README.md)).
+## Install it
 
-## Components
+Type these **inside Claude Code** (see the [main README](../../README.md) if you haven't added
+the collection yet), then restart Claude Code:
+
+```
+/plugin install iterator@iterative
+```
+
+## Signing in
+
+The first time you ask Iterator something, a browser tab opens. Sign in with your
+**@iterative.vc** Google account — access is restricted to that domain, so a personal address
+will be turned away.
+
+This happens **once per computer**. After that it just works.
+
+## Things you can ask
+
+Put `/iterator` in front of your question:
+
+```
+/iterator how many companies applied to the current cohort?
+/iterator what did partners say about <company>?
+/iterator which companies applied more than once and still got in?
+/iterator show me the highest-rated applications we passed on
+/iterator summarize <partner>'s feedback style over the last 10 reviews
+```
+
+You can also just ask normally. If your question sounds like a CRM question, Claude gets a
+quiet reminder to check Iterator rather than answer from memory — so "how's deal flow looking
+this batch?" usually does the right thing on its own.
+
+## How it answers
+
+Two house rules are built in, so you don't have to ask for them:
+
+- **Partner feedback always names who said it** — not just "the feedback was positive."
+- **All review stages are shown** (inbox review, first interview, final interview), not only
+  the most recent one.
+
+If Claude ever gives you a number without saying where it came from, ask it to show the query.
+It's reading real records and can always show its work.
+
+## If something isn't working
+
+- **Claude answers without checking the CRM** — say "use Iterator" explicitly, or start the
+  question with `/iterator`.
+- **Sign-in fails** — it must be your `@iterative.vc` account.
+- **`/iterator` isn't recognized** — restart Claude Code after installing.
+- **It says it can't find a table or field** — the CRM's structure changes; ask it to re-check
+  the schema and try again.
+
+---
+
+## For engineers
+
+**Components**
 
 - **`.mcp.json`** — direct HTTPS connection to the Iterator MCP server (`type: http`,
   a Supabase edge function). OAuth is per-user and gated to `iterative.vc` emails; no
@@ -16,23 +72,18 @@ Installed as part of the `iterative` marketplace (see the [repo README](../../RE
 - **`hooks/hooks.json`** + **`scripts/iterator-nudge.sh`** — a `UserPromptSubmit` hook that
   injects a reminder to use Iterator when the prompt looks like a CRM / deal-flow question.
 
-## Usage
+**Query conventions** (baked into `/iterator`)
 
-```
-/iterator which companies applied the most times and still got in?
-/iterator show the last 10 feedback rows from <partner> and summarize their style
-```
+- `describe_schema` first — join paths are grant-driven and not guessable.
+- `run_sql` for counting / aggregation / ranking; base tables for custom aggregation,
+  `*_directory` / `*_active` projections for pre-derived flags.
+- "Active cohort" = `cohort.status = 'recruiting'`, never a name match.
+- Partner feedback lives one row per `partner × stage × application`; join
+  `feedback → profile → person` to resolve a partner's name.
 
-Or just ask normally — if the prompt trips the keyword nudge, Claude gets reminded to reach
-for Iterator on its own.
+### Running Claude Code on a remote server
 
-## Auth
-
-The first Iterator tool call opens a browser OAuth flow. Sign in with your **@iterative.vc**
-Google account — the server gates on that domain, so a personal address is rejected. The token
-is cached per user in `~/.claude/.credentials.json`, so this is a one-time step per machine.
-
-### On a remote or headless machine (SSH, dev box, container)
+Not relevant if you use Claude Code on your own laptop — skip this.
 
 Claude Code receives the OAuth code on a **local** callback listener at
 `http://localhost:3118/callback`. "localhost" means the machine running Claude Code — so if you
@@ -74,13 +125,4 @@ the file at mode `600`.
 > (`/authorize`, `/register`) instead of the endpoints the server advertises under
 > `/auth/v1/oauth/*` — our issuer sits at a subpath, and the path gets dropped. Both requests
 > return 404. There is no client-side override: `authorizationUrl` / `tokenUrl` in `.mcp.json`
-> are silently ignored. Use one of the four methods above instead.
-
-## Query conventions (baked into `/iterator`)
-
-- `describe_schema` first — join paths are grant-driven and not guessable.
-- `run_sql` for counting / aggregation / ranking; base tables for custom aggregation,
-  `*_directory` / `*_active` projections for pre-derived flags.
-- "Active cohort" = `cohort.status = 'recruiting'`, never a name match.
-- Partner feedback lives one row per `partner × stage × application`; join
-  `feedback → profile → person` to resolve a partner's name.
+> are silently ignored. Upstream: anthropics/claude-code#80731 and #85897.
