@@ -2,7 +2,7 @@
   "mcpServers": {
     "iterator": {
       "type": "http",
-      "url": "https://REPLACE_WITH_ITERATOR_MCP_URL/mcp"
+      "url": "https://xeqwfojsyirphtgmmlhw.supabase.co/functions/v1/mcp"
     }
   }
 }

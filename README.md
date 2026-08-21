@@ -41,24 +41,25 @@ repo contains **no tokens or credentials**.
 - **Interactive only:** the first-run OAuth flow needs a browser, so it can't complete in a
   headless / CI / cron context. Do the one-time auth in an interactive session first.
 
-## Configure the MCP endpoint
+## MCP endpoint
 
-Before publishing, set the real server URL in
-[`plugins/iterator/.mcp.json`](plugins/iterator/.mcp.json):
+The endpoint is set in [`plugins/iterator/.mcp.json`](plugins/iterator/.mcp.json):
 
 ```json
 {
   "mcpServers": {
     "iterator": {
       "type": "http",
-      "url": "https://REPLACE_WITH_ITERATOR_MCP_URL/mcp"
+      "url": "https://xeqwfojsyirphtgmmlhw.supabase.co/functions/v1/mcp"
     }
   }
 }
 ```
 
-Replace `https://REPLACE_WITH_ITERATOR_MCP_URL/mcp` with Iterator's direct HTTPS MCP
-endpoint. Leave out any `headers` / secrets — OAuth is negotiated at connect time.
+It's a Supabase edge-function MCP server. OAuth is negotiated at connect time and gated to
+**`iterative.vc` email addresses** — there are no `headers` / secrets in this file. The data
+is normalized, de-duped, and cleaned from Airtable (at most ~1 hour behind), and joins across
+leads, companies, people, applications, LinkedIn threads, feedback, and recommendations.
 
 ## Hosting (private is fine)
 

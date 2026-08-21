@@ -7,15 +7,30 @@ You have access to the **Iterator MCP** — Iterative's CRM covering founders, c
 applications, cohorts, partner feedback, leads, and portfolio. Answer the question below
 using Iterator. **Do not answer from memory or guess** — query the live data.
 
+The full Iterator toolset (load all of these if they're deferred — don't limit yourself to
+`describe_schema`/`run_sql`):
+
+- **`describe_schema`** — the catalog of everything `run_sql` can read (relations, columns, joins).
+- **`run_sql`** — one read-only SELECT for ad-hoc analysis / aggregation / ranking.
+- **`search`** — cross-entity semantic/text search when you don't know the exact record.
+- **`journey`** — a company/founder's progression through the pipeline over time.
+- **`list_applications`**, **`list_companies`**, **`list_leads`**, **`list_people`** — filtered list
+  queries returning refs + totals (good for review-queue / directory-style questions).
+- **`get_application`**, **`get_company`**, **`get_lead`**, **`get_person`**, **`get_thread`** —
+  full detail for a single record (incl. LinkedIn threads).
+
+Pick the narrowest tool that fits: `get_*`/`list_*`/`search`/`journey` for lookups and
+directory questions; `run_sql` for anything that counts, aggregates, ranks, or joins across
+entities.
+
 Workflow:
 
 1. **Load the tools if needed.** The Iterator tools may be deferred. If they aren't already
-   available, load them (e.g. `ToolSearch` for "Iterator", or select `describe_schema`,
-   `run_sql`, `list_applications`, `list_companies`, `list_people`, `get_*`, `search`).
+   available, load them (e.g. `ToolSearch` for "Iterator", which surfaces the full set above).
 2. **Call `describe_schema` before writing SQL.** Table names and join paths are grant-driven
    and not guessable. The schema is large — read it in chunks or via a subagent rather than
    dumping it inline.
-3. **Prefer `run_sql` for any counting, aggregation, or ranking.** Use the base tables
+3. **Use `run_sql` for any counting, aggregation, or ranking.** Use the base tables
    (`application`, `company`, `cohort`, `feedback`, `person`, `profile`) for custom aggregation;
    use the `*_directory` / `*_active` projections only for their pre-derived flags
    (`is_portfolio`, `has_applied`, `avg_recommendation`, …). Remember "active cohort" means

@@ -7,8 +7,9 @@ Installed as part of the `iterative` marketplace (see the [repo README](../../RE
 
 ## Components
 
-- **`.mcp.json`** — direct HTTPS connection to the Iterator MCP server (`type: http`).
-  OAuth is per-user; no credentials are stored here. **Set the real URL before publishing.**
+- **`.mcp.json`** — direct HTTPS connection to the Iterator MCP server (`type: http`,
+  a Supabase edge function). OAuth is per-user and gated to `iterative.vc` emails; no
+  credentials are stored here.
 - **`commands/iterator.md`** — the `/iterator <question>` slash command. Enforces:
   load tools → `describe_schema` → `run_sql`, answer from live data, and (per house style)
   name who gave feedback and show all stages.
