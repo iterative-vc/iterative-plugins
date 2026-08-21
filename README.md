@@ -1,101 +1,65 @@
-# Iterative Claude Code plugins
+# iterative-plugins
 
-A private [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) for
-Iterative. Today it ships one plugin, **`iterator`**, which gives Claude Code first-class
-access to the Iterator CRM (deal flow, founders, companies, applications, cohorts, partner
-feedback, portfolio).
+Iterative's shared [Claude Code plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces).
+One repo, many plugins — add the marketplace once and install any plugin the team ships
+(CRM access, skills, commands, hooks). Contributions welcome from anyone on the team; see
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-## What `iterator` gives you
-
-| Piece | What it does |
-|-------|--------------|
-| **Iterator MCP connection** | A direct HTTPS connection to the Iterator MCP server. Auth is per-user OAuth (see below) — no secrets are stored in this repo. |
-| **`/iterator <question>`** | A slash command for deliberate CRM queries. It forces the right flow: load tools → `describe_schema` → `run_sql`, and answer from live data instead of guessing. |
-| **Keyword nudge (hook)** | A `UserPromptSubmit` hook that watches your prompt and, when it looks like a CRM / deal-flow question, reminds Claude to use Iterator — the backstop for when neither you nor Claude thinks to reach for it. |
-
-The command is for when *you* know you want the CRM; the hook covers the times you don't.
-
-## Install
+## Install the marketplace (once)
 
 ```shell
-# 1. Add this marketplace (use the private git URL you host this repo at,
-#    a github owner/repo, or a local path while developing):
-/plugin marketplace add <your-org>/iterator-plugin
-#    e.g. /plugin marketplace add ./iterator-plugin   (local checkout)
+# Public GitHub (once this repo is pushed):
+/plugin marketplace add thealveen/iterative-plugins
 
-# 2. Install the plugin:
+# …or a local checkout while developing:
+/plugin marketplace add /absolute/path/to/iterative-plugins
+```
+
+Then install whatever you want and refresh when new plugins land:
+
+```shell
 /plugin install iterator@iterative
+/plugin marketplace update iterative
 ```
 
-Update later with `/plugin marketplace update iterative`.
+> The marketplace is named **`iterative`** (independent of the repo name), so installs are
+> always `<plugin>@iterative`.
 
-## Authentication (OAuth)
+## Available plugins
 
-The Iterator MCP uses OAuth, and it is handled **per user, on your own machine** — this
-repo contains **no tokens or credentials**.
+| Plugin | Install | What it does |
+|--------|---------|--------------|
+| **iterator** | `/plugin install iterator@iterative` | First-class access to the **Iterator CRM** — the MCP connection + an `/iterator` command + a nudge hook. [Details ›](plugins/iterator/README.md) |
 
-- The first time you use an Iterator tool after installing, Claude Code sees the server
-  needs authorization and opens the **OAuth flow in your browser**. You log in as yourself
-  and approve; the resulting token is cached locally in your Claude Code credential store.
-- Everyone authenticates as their own identity. Revoking one person never touches anyone else.
-- **Interactive only:** the first-run OAuth flow needs a browser, so it can't complete in a
-  headless / CI / cron context. Do the one-time auth in an interactive session first.
+_Add yours here when you contribute._
 
-## MCP endpoint
+## Contributing
 
-The endpoint is set in [`plugins/iterator/.mcp.json`](plugins/iterator/.mcp.json):
-
-```json
-{
-  "mcpServers": {
-    "iterator": {
-      "type": "http",
-      "url": "https://xeqwfojsyirphtgmmlhw.supabase.co/functions/v1/mcp"
-    }
-  }
-}
-```
-
-It's a Supabase edge-function MCP server. OAuth is negotiated at connect time and gated to
-**`iterative.vc` email addresses** — there are no `headers` / secrets in this file. The data
-is normalized, de-duped, and cleaned from Airtable (at most ~1 hour behind), and joins across
-leads, companies, people, applications, LinkedIn threads, feedback, and recommendations.
-
-## Hosting (private is fine)
-
-A marketplace is just a git repo containing `.claude-plugin/marketplace.json`. It can be a
-**private** GitHub / GitLab / Bitbucket / self-hosted repo — Claude Code clones it with each
-user's own git credentials. Because the plugin folder lives *inside* this repo (referenced by
-relative path in `marketplace.json`), users never need access to a second repository.
-
-For Team/Enterprise distribution you can also push it via
-**Organization settings → Plugins** so it's synced to everyone automatically.
+Everything is one folder under `plugins/` plus one entry in the catalog. Start from
+`plugins/_template/` and follow [`CONTRIBUTING.md`](CONTRIBUTING.md). A plugin can bundle any
+mix of commands, skills, agents, hooks, and MCP servers — including a plugin that's *just* a
+skill or *just* a command.
 
 ## Repo layout
 
 ```
-iterator-plugin/
+iterative-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json          # catalog: lists the iterator plugin
+│   └── marketplace.json      # the catalog — one entry per plugin
 ├── plugins/
-│   └── iterator/
-│       ├── .claude-plugin/
-│       │   └── plugin.json        # plugin manifest
-│       ├── .mcp.json              # Iterator MCP server (set the URL)
-│       ├── commands/
-│       │   └── iterator.md        # /iterator slash command
-│       ├── hooks/
-│       │   └── hooks.json         # registers the UserPromptSubmit hook
-│       ├── scripts/
-│       │   └── iterator-nudge.sh  # keyword nudge logic
-│       └── README.md
-└── README.md                      # this file
+│   ├── iterator/             # the Iterator CRM plugin
+│   └── _template/            # copy this to start a new plugin (not installable)
+├── CONTRIBUTING.md
+└── README.md                 # this file
 ```
 
-## Tuning the nudge
+## Notes
 
-The hook's keyword list lives in
-[`plugins/iterator/scripts/iterator-nudge.sh`](plugins/iterator/scripts/iterator-nudge.sh).
-Broaden the `pattern` if real questions slip through; tighten it if you get nudged on
-unrelated (e.g. coding) prompts. A false nudge only costs one injected line, so err toward
-coverage.
+- **Auth / secrets:** plugins never store credentials. MCP servers use per-user OAuth (e.g.
+  Iterator's is gated to `iterative.vc` emails and OAuths in your browser on first use). See
+  each plugin's own README.
+- **Public repo:** hosting this publicly lets the team `add` it with no login. It contains no
+  secrets by design — only pointers (URLs) and code. Anything sensitive stays behind each
+  server's own auth.
+- **Hooks execute code** on each user's machine. Keep hook scripts small and readable; that's
+  the trust boundary for a shared marketplace.

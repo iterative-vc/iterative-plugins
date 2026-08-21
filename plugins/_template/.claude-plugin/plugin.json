@@ -1,0 +1,10 @@
+{
+  "name": "CHANGE-ME",
+  "displayName": "Change Me",
+  "version": "0.1.0",
+  "description": "One-line description of what this plugin does. Shown in the /plugin install list.",
+  "author": {
+    "name": "Your Name"
+  },
+  "keywords": ["example"]
+}
