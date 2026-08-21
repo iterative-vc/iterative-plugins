@@ -28,8 +28,53 @@ for Iterator on its own.
 
 ## Auth
 
-First Iterator tool call triggers a browser OAuth flow; the token is cached locally per user.
-Interactive sessions only (won't complete headless). See the repo README for details.
+The first Iterator tool call opens a browser OAuth flow. Sign in with your **@iterative.vc**
+Google account — the server gates on that domain, so a personal address is rejected. The token
+is cached per user in `~/.claude/.credentials.json`, so this is a one-time step per machine.
+
+### On a remote or headless machine (SSH, dev box, container)
+
+Claude Code receives the OAuth code on a **local** callback listener at
+`http://localhost:3118/callback`. "localhost" means the machine running Claude Code — so if you
+open the auth URL in your laptop's browser while CC runs on a remote box, the redirect lands on
+the wrong machine and the login never completes. Pick whichever fits:
+
+**1. VS Code / Cursor Remote-SSH** — nothing to do. Port forwarding is automatic; run Claude
+Code in the integrated terminal and authenticate normally. Easiest option if you already work
+this way.
+
+**2. SSH tunnel** — the plain-CLI answer. The callback port is fixed at 3118:
+
+```bash
+ssh -t -L 3118:localhost:3118 you@devbox
+```
+
+Then use Iterator inside that session and authenticate as usual. (`-t` matters: the auth prompt
+needs a real TTY.) Already connected without the tunnel? Press `~C` on a fresh line and type
+`-L 3118:localhost:3118` — the callback only fires after you approve in the browser, so adding
+it mid-flow works.
+
+**3. Complete the callback by hand** — no tunnel required. Let the redirect fail in your
+laptop's browser, copy the full URL out of the address bar, and run this on the remote box:
+
+```bash
+curl "http://localhost:3118/callback?code=...&state=..."
+```
+
+The waiting listener picks it up. Move quickly — authorization codes are single-use and expire
+in about a minute.
+
+**4. Copy the credential** — authenticate once on your laptop, then copy the `iterator` entry
+under `mcpOAuth` in `~/.claude/.credentials.json` across. No browser needed on the remote at
+all. You are moving a live credential, so `scp` it rather than pasting it anywhere, and keep
+the file at mode `600`.
+
+> **`claude mcp login --no-browser` does not work against this server.** The flag exists for
+> exactly this case, but as of Claude Code 2.1.237 it builds OAuth URLs from the domain root
+> (`/authorize`, `/register`) instead of the endpoints the server advertises under
+> `/auth/v1/oauth/*` — our issuer sits at a subpath, and the path gets dropped. Both requests
+> return 404. There is no client-side override: `authorizationUrl` / `tokenUrl` in `.mcp.json`
+> are silently ignored. Use one of the four methods above instead.
 
 ## Query conventions (baked into `/iterator`)
 

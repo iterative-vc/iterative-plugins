@@ -58,6 +58,9 @@ iterative-plugins/
 - **Auth / secrets:** plugins never store credentials. MCP servers use per-user OAuth (e.g.
   Iterator's is gated to `iterative.vc` emails and OAuths in your browser on first use). See
   each plugin's own README.
+- **Remote / headless machines:** OAuth completes on a local callback listener, so a plugin
+  running over SSH needs one extra step (a tunnel, or one of three alternatives). See
+  [the iterator README](plugins/iterator/README.md#on-a-remote-or-headless-machine).
 - **Public repo:** hosting this publicly lets the team `add` it with no login. It contains no
   secrets by design — only pointers (URLs) and code. Anything sensitive stays behind each
   server's own auth.
