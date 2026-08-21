@@ -4,8 +4,6 @@ Shared add-ons for Claude Code, built by and for the Iterative team. Add the col
 and you can install anything the team has built — starting with the ability to ask questions
 about our deal flow in plain English and get real answers from the CRM.
 
-**You don't need to be an engineer to use any of this.**
-
 ## What's available
 
 | Add-on | What it gives you |
@@ -14,7 +12,7 @@ about our deal flow in plain English and get real answers from the CRM.
 
 _More to come — see [Adding your own](#adding-your-own)._
 
-## Set it up (about two minutes)
+## Set it up
 
 Everything below is typed **inside Claude Code**, not in a terminal. Open Claude Code, type
 the line, press enter.
@@ -60,13 +58,12 @@ When someone adds a new add-on or improves an existing one:
 If you've worked out something useful in Claude Code — a prompt you keep reusing, a workflow,
 a set of rules you want Claude to follow — it can live here so everyone gets it.
 
-You don't have to be an engineer. The smallest useful contribution is a single text file
-describing how you want Claude to handle something. [CONTRIBUTING.md](CONTRIBUTING.md) walks
-through it.
+The smallest useful contribution is a single text file describing how you want Claude to
+handle something. [CONTRIBUTING.md](CONTRIBUTING.md) walks through it.
 
 ---
 
-## For engineers
+## Under the hood
 
 **Repo layout**
 

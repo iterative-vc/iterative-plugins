@@ -2,9 +2,9 @@
 
 This repo is **one marketplace, many plugins**. Everyone on the team adds the
 marketplace once; each contribution is a new folder under `plugins/` plus one
-entry in the catalog. You don't need to understand the whole repo to add yours.
+entry in the catalog. Nothing else in the repo needs to change.
 
-## Not an engineer? Start here
+## The simplest contribution: a skill
 
 The most useful thing you can contribute is usually a **skill** — a plain text file that
 tells Claude how you want something handled. No code. If you've found yourself pasting the

@@ -59,7 +59,7 @@ It's reading real records and can always show its work.
 
 ---
 
-## For engineers
+## Under the hood
 
 **Components**
 
@@ -83,7 +83,7 @@ It's reading real records and can always show its work.
 
 ### Running Claude Code on a remote server
 
-Not relevant if you use Claude Code on your own laptop — skip this.
+This only applies when Claude Code runs somewhere other than the machine with your browser.
 
 Claude Code receives the OAuth code on a **local** callback listener at
 `http://localhost:3118/callback`. "localhost" means the machine running Claude Code — so if you
