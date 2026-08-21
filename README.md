@@ -8,8 +8,8 @@ One repo, many plugins — add the marketplace once and install any plugin the t
 ## Install the marketplace (once)
 
 ```shell
-# Public GitHub (once this repo is pushed):
-/plugin marketplace add thealveen/iterative-plugins
+# Public GitHub:
+/plugin marketplace add Iterative-VC/iterative-plugins
 
 # …or a local checkout while developing:
 /plugin marketplace add /absolute/path/to/iterative-plugins
