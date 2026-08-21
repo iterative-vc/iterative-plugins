@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "iterator": {
+      "type": "http",
+      "url": "https://REPLACE_WITH_ITERATOR_MCP_URL/mcp"
+    }
+  }
+}
