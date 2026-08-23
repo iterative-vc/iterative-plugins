@@ -213,13 +213,12 @@ It's reading real records and can always show its work.
   `*_active` projections for pre-derived flags.
 - "Active cohort" = `cohort.status = 'recruiting'`, never a name match.
 - Leads live in one `lead` table split by a `lane` column (`cohort` vs `direct`); the SF lane
-  is `direct`. Partner feedback lives one row per `partner × stage × application`; join
-  `feedback → profile → person` to resolve a partner's name.
+  is `direct`. Founder LinkedIn is on `person.linkedin_url` (join `lead → person` on
+  `primary_contact_id`) — populated for ~all direct leads. Partner feedback lives one row per
+  `partner × stage × application`; join `feedback → profile → person` to resolve a partner's name.
 
-> **Tool availability.** The lead-specific tools are rolling out; the guidance names them as
-> examples (`find_leads` / `leads_summary` / `create_lead`) but falls back to the always-present
-> `list_leads` / `get_lead` / `run_sql`, so the commands work whatever the server currently
-> exposes.
+> **Lead tools.** `find_leads` / `leads_summary` / `create_lead` / `get_lead` are live in prod.
+> `run_sql` covers what they can't express — the founder-LinkedIn join, or custom aggregation.
 
 ### Running Claude Code on a remote server
 

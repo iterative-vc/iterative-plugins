@@ -109,31 +109,34 @@ cluster, not row by row.
 Want the money-signal cut, the SEA cluster, or a look at the raw inbox?
 ```
 
-## Output discipline (never dump raw rows)
+## Output discipline (lists → a markdown table, never raw JSON)
 
 The lead tools return **big** rows (nested `signals`, `launches`, full company/founder
-objects). Never echo that JSON. Render each lead as a **compact, scannable card** — stage as
-a leading tag (it's its own thing, not tacked onto the founder), then the company, a
-one-liner, and a short meta line:
+objects). Never echo that JSON. Render a list of leads as a compact **markdown table** — it
+renders in the terminal and scans fast, one row per lead:
 
 ```
-[SOURCED]  Tasklet — Andrew Lee
-           "AI agents that connect to your tools and run 24/7 to get work done"
-           YC #31470 · unclaimed · B2B · San Francisco
-           Signal: $20M raise at $175M val
+| # | Company | Founder | Focus | Top signal | Launch |
+|--:|---------|---------|-------|-----------|--------|
+| 1 ★ | [Tasklet](https://tasklet.ai) | [Andrew Lee](https://linkedin.com/in/andrewlee) | B2B · SF | $20M raise ($175M val) | [39▲](https://www.ycombinator.com/launches/PsX-tasklet-…) |
+| 2 | [Clara](https://askclara.com) | [George Favvas](https://linkedin.com/in/gfavvas) | Healthcare · SF | $12M seed | [11▲](https://www.ycombinator.com/launches/QMs-clara-…) |
 ```
 
-- **`[STAGE]`** in caps, leading — the fastest thing to scan down a list.
-- **Company — Founder** as the title. Link the company name to its site (`[Tasklet](https://tasklet.ai)`).
-- **One-liner** from the company's tagline/description if there is one (skip the line if not).
-- **Meta line:** source (+ YC id/batch) · owner or `unclaimed` · industry · location.
-- **Signal:** the strongest signal if any (largest raise, standout traction) on its own line.
-- Render any URL as a **clickable markdown link** (`[label](url)`), never bare text — company
-  site, launch post, founder LinkedIn when the record has one. For the full link set (all
-  launches + media + LinkedIn), that's what `/tinderate` and `get_lead` detail are for.
-- **Blank line between leads** so each reads as a separate item.
-- **Default ~10.** If there are more, say how many and offer to narrow — don't fetch them all.
-- Pull full detail (`get_lead`) only for a **specific** lead the user names.
+- **#** — a stable index so the user can act by number ("assign 1, pass 2"). Put a **★** by the
+  number when the lead is shortlisted (`shortlist_count > 0`).
+- **Company** links to its site (`website`/`domain`); **Founder** links to
+  `person.linkedin_url`; **Launch** shows the top launch's votes linked to the post (append
+  `· [▶](video_url)` when there's media). All markdown links so the terminal makes them clickable.
+- **Focus** = industry · location. **Top signal** = the single strongest (largest raise /
+  standout traction) — the table is a scan, not the full dossier.
+- Add an **Owner** column when the view spans owners (drop it when everything's unclaimed).
+- **Default ~10 rows.** If there are more, say how many and offer to narrow — don't fetch all.
+- For the **full** dossier on a lead (every founder, every launch + media, all signals), use
+  `/tinderate` or pull `get_lead` for a lead the user names.
+
+**Founder LinkedIn** (`person.linkedin_url`) is populated for ~all direct leads. If the lead
+payload doesn't include it, fetch it for the shown rows with one `run_sql` (`lead` → `person`
+on `primary_contact_id`) rather than leaving the column blank.
 
 ## Worked examples (phrase → what to do)
 
@@ -151,9 +154,9 @@ one-liner, and a short meta line:
    (e.g. `ToolSearch` for "Iterator", which surfaces the full set).
 2. **Call `describe_schema` before writing SQL.** Table/column/enum names are
    grant-driven and not guessable.
-3. **Use the Iterator lead tools, not guesses** — e.g. `find_leads` / `leads_summary` /
-   `create_lead` once available, otherwise `list_leads` / `get_lead`. Reserve `run_sql`
-   for aggregation the lead tools can't express (and check `describe_schema` first for the
-   real `lead.lane` / `lead.stage` / `lead.source` values before hand-writing filters).
+3. **Use the Iterator lead tools, not guesses** — `find_leads` / `leads_summary` /
+   `create_lead` / `get_lead` (all live in prod). Reserve `run_sql` for the LinkedIn join or
+   aggregation the lead tools can't express (and check `describe_schema` first for the real
+   `lead.lane` / `lead.stage` / `lead.lead_source` values before hand-writing filters).
 
 Request (if empty, follow "No request given" above — summary only, then ask): $ARGUMENTS

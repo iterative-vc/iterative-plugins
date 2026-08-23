@@ -46,46 +46,48 @@ Query the live data with the Iterator lead tools — **never guess**.
 Never dump the whole inbox — **at most 10 cards per turn.** A batch can be one import of many
 hundreds of leads.
 
-## Card format (full detail, one per lead)
+## Card format (one rich card per lead)
 
-**Render every URL as a clickable markdown link** (`[label](url)`), not bare text — the
-terminal makes them clickable. Include the real links the lead carries: the company site, each
-launch post and its media, and the founder's LinkedIn when the record has one.
+Each lead is a **company** with **founder(s)**, **launch(es)**, and **signals** — lay it out as
+a sectioned card, not a table. **Render every URL as a clickable markdown link** (`[label](url)`),
+never bare text: the company site, each founder's LinkedIn, and each launch's post + media.
 
 ```
-1. [SOURCED · ★2]  **[Tasklet](https://tasklet.ai)** — Andrew Lee · repeat founder · [LinkedIn](https://linkedin.com/in/…)
-   "AI agents that connect to your tools and run 24/7 to get real work done"
-   B2B · San Francisco · team 8 · YC #31470
-   Signals: $20M raise ($175M val) · $5M ARR, +1200% since Jan
-   Launches:
-     • [The cloud agent OS for knowledge work](https://www.ycombinator.com/launches/PsX-tasklet-…) — 39 votes · [video](https://youtu.be/sriwtDYi6XQ)
+─ 1 · ★2 · SOURCED ─────────────────────────────────
+**[Tasklet](https://tasklet.ai)** · B2B · San Francisco · 8 people · YC #31470
+Andrew Lee — repeat founder — [LinkedIn ↗](https://linkedin.com/in/andrewlee)
+"AI agents that connect to your tools and run 24/7 to get real work done"
+Signals: $20M raise ($175M val) · $5M ARR (+1200% since Jan)
+Launches
+  • [The cloud agent OS for knowledge work](https://www.ycombinator.com/launches/PsX-tasklet-…) — 39 ▲ · [video ↗](https://youtu.be/sriwtDYi6XQ)
 ```
 
-- **`[SOURCED · ★N]`** leading tag — `★N` shows shortlist count when >0 (why it's near the top);
-  omit the star when zero.
-- **Company — Founder.** Link the **company name** to its `website` / `domain`. Add a short
-  pedigree flag if notable (repeat founder, selected-employer alum). Link **[LinkedIn]** on the
-  founder **only when the record actually has a URL** (it lives on the person/thread side, not
-  always on the lead — pull it via `get_person` / `get_thread` if cheap, otherwise omit; never
-  invent one).
-- **One-liner** from the launch tagline / description (skip if none).
-- **Meta:** industry · location · team size · source (+ YC id).
-- **Signals:** the notable ones (raises, traction, contracts) — not every duplicate. If a signal
-  has a `source_url`, you may link it.
-- **Launches:** list **every** launch the lead has (it's an array), each as
-  `• [tagline](launch_url) — N votes · [video](video_url)`. Include each launch's media
-  (`video_urls`); drop the `· [video]` part when there's none.
-- Blank line between cards so each reads as its own item.
+- **Header rule:** `─ <#> · ★<N> · <STAGE> ─…` — `<#>` is the index for acting by number,
+  `★<N>` shows the shortlist count when >0 (why it's near the top; omit the star at zero).
+- **Company line:** company name linked to its `website`/`domain`, then industry · location ·
+  team size · source (+ YC id).
+- **Founder line(s):** one per founder — name, a pedigree flag if notable (repeat founder,
+  selected-employer alum), and **[LinkedIn ↗]** linked to `person.linkedin_url`. A lead can
+  have co-founders; list each on its own line. Link LinkedIn **only when a URL exists** — never
+  invent one; omit the link if missing.
+- **Pitch:** the launch tagline / one-liner (skip if none).
+- **Signals:** the notable ones (raises, traction, contracts), deduped — not every row; link a
+  signal's `source_url` when useful.
+- **Launches:** list **every** launch (it's an array), each `• [tagline](launch_url) — N ▲`
+  plus `· [video ↗](video_url)` for each media; drop the video part when there's none.
+- Blank line between cards.
 
 ## Discipline
 
 1. **Load the tools if deferred** (`ToolSearch` for "Iterator").
-2. **`describe_schema` first** — the real `lead.lane` / `lead.stage` / `shortlist` /
-   `source` fields and enum values are grant-driven, not guessable.
-3. **Use the Iterator lead tools** — e.g. `leads_summary` for the count, `find_leads`
-   (`lane=direct, stage=sourced, owner=none`, ordered, `limit=10`) for the batch, `get_lead`
-   for full detail, and the action verbs to act — falling back to `list_leads` / `get_lead` /
-   `run_sql` where those aren't available. Reserve `run_sql` for the ordered id list or any
-   aggregation the lead tools can't express.
+2. **`describe_schema` first** — the real `lane` / `stage` / shortlist / `source` fields and
+   enum values are grant-driven, not guessable.
+3. **Use the Iterator lead tools** (all live in prod): `leads_summary` for the count,
+   `find_leads` (`lane=direct, stage=sourced, owner=none`, ordered, `limit=10`) for the batch,
+   `get_lead` for full detail, the action verbs to act. Reserve `run_sql` for the ordered id
+   list, the LinkedIn join, or aggregation the tools can't express.
+4. **Founder LinkedIn:** `person.linkedin_url` is populated for ~all direct leads. If a batch's
+   `find_leads` rows don't carry it, fetch it in **one** `run_sql` for the 10 shown leads
+   (`lead` → `person` on `primary_contact_id`) — don't do a `get_person` per lead.
 
 Criteria (optional — narrows the queue, ordering stays shortlisted-first): $ARGUMENTS
