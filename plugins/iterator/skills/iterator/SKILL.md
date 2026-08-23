@@ -1,8 +1,7 @@
 ---
 name: iterator
-description: Query the Iterator CRM (Iterative deal-flow / portfolio) via the Iterator MCP
+description: Query the Iterator CRM (Iterative deal-flow / portfolio) via the Iterator MCP — founders, companies, applications, cohorts, partner feedback, leads, portfolio. Use for any question about Iterative's deal flow that should be answered from live CRM data rather than memory.
 argument-hint: <question about founders, companies, applications, cohorts, or partner feedback>
-disable-model-invocation: true
 ---
 
 You have access to the **Iterator MCP** — Iterative's CRM covering founders, companies,

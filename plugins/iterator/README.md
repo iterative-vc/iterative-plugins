@@ -149,9 +149,11 @@ It's reading real records and can always show its work.
   working loop: the direct-lane stages, the action verbs, sources, and the orient→explore→act
   flow. `/sf` is a thin alias for `/porygon`.
 - These ship as **skills** (not `commands/`) so each works both bare (`/porygon`) and
-  namespaced (`/iterator:porygon`); a plain command only registers the namespaced form. They
-  set `disable-model-invocation: true`, so they run only when you type them, not on Claude's
-  own initiative.
+  namespaced (`/iterator:porygon`); a plain command only registers the namespaced form.
+  `/iterator` and `/porygon` are **model-invocable** — Claude can reach for them on its own
+  when a question fits their `description` (e.g. "how's the SF pipeline?"), as well as when
+  you type them. `/sf` is a manual-only alias (`disable-model-invocation: true`) so it doesn't
+  compete with `/porygon` as an auto-invoke target.
 - **`hooks/hooks.json`** + **`scripts/iterator-nudge.sh`** — a `UserPromptSubmit` hook that
   injects a reminder to use Iterator when a prompt looks like a CRM / deal-flow / **lead**
   question (it matches lead / SF / porygon vocabulary too), and hands Claude the lane model.
