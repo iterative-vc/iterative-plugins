@@ -13,6 +13,9 @@ the collection yet), then restart Claude Code:
 /plugin install iterator@iterative
 ```
 
+When it asks where to install, choose **User scope** ("install for yourself across all
+projects") — Iterator is a CRM you'll want from any project, not just one repo.
+
 ## Signing in
 
 The first time you ask Iterator something, a browser tab opens. Sign in with your
