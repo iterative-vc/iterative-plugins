@@ -124,10 +124,13 @@ one-liner, and a short meta line:
 ```
 
 - **`[STAGE]`** in caps, leading — the fastest thing to scan down a list.
-- **Company — Founder** as the title.
+- **Company — Founder** as the title. Link the company name to its site (`[Tasklet](https://tasklet.ai)`).
 - **One-liner** from the company's tagline/description if there is one (skip the line if not).
 - **Meta line:** source (+ YC id/batch) · owner or `unclaimed` · industry · location.
 - **Signal:** the strongest signal if any (largest raise, standout traction) on its own line.
+- Render any URL as a **clickable markdown link** (`[label](url)`), never bare text — company
+  site, launch post, founder LinkedIn when the record has one. For the full link set (all
+  launches + media + LinkedIn), that's what `/tinderate` and `get_lead` detail are for.
 - **Blank line between leads** so each reads as a separate item.
 - **Default ~10.** If there are more, say how many and offer to narrow — don't fetch them all.
 - Pull full detail (`get_lead`) only for a **specific** lead the user names.

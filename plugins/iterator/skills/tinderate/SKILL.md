@@ -48,22 +48,33 @@ hundreds of leads.
 
 ## Card format (full detail, one per lead)
 
+**Render every URL as a clickable markdown link** (`[label](url)`), not bare text — the
+terminal makes them clickable. Include the real links the lead carries: the company site, each
+launch post and its media, and the founder's LinkedIn when the record has one.
+
 ```
-1. [SOURCED · ★2]  Tasklet — Andrew Lee  · repeat founder
+1. [SOURCED · ★2]  **[Tasklet](https://tasklet.ai)** — Andrew Lee · repeat founder · [LinkedIn](https://linkedin.com/in/…)
    "AI agents that connect to your tools and run 24/7 to get real work done"
    B2B · San Francisco · team 8 · YC #31470
    Signals: $20M raise ($175M val) · $5M ARR, +1200% since Jan
-   Launch: 39 votes · https://www.ycombinator.com/launches/PsX-tasklet-…
+   Launches:
+     • [The cloud agent OS for knowledge work](https://www.ycombinator.com/launches/PsX-tasklet-…) — 39 votes · [video](https://youtu.be/sriwtDYi6XQ)
 ```
 
 - **`[SOURCED · ★N]`** leading tag — `★N` shows shortlist count when >0 (why it's near the top);
   omit the star when zero.
-- **Company — Founder**, with a short pedigree flag if notable (repeat founder, selected-employer
-  alum).
+- **Company — Founder.** Link the **company name** to its `website` / `domain`. Add a short
+  pedigree flag if notable (repeat founder, selected-employer alum). Link **[LinkedIn]** on the
+  founder **only when the record actually has a URL** (it lives on the person/thread side, not
+  always on the lead — pull it via `get_person` / `get_thread` if cheap, otherwise omit; never
+  invent one).
 - **One-liner** from the launch tagline / description (skip if none).
 - **Meta:** industry · location · team size · source (+ YC id).
-- **Signals:** the notable ones (raises, traction, contracts) — not every duplicate.
-- **Launch:** votes + link when present.
+- **Signals:** the notable ones (raises, traction, contracts) — not every duplicate. If a signal
+  has a `source_url`, you may link it.
+- **Launches:** list **every** launch the lead has (it's an array), each as
+  `• [tagline](launch_url) — N votes · [video](video_url)`. Include each launch's media
+  (`video_urls`); drop the `· [video]` part when there's none.
 - Blank line between cards so each reads as its own item.
 
 ## Discipline
