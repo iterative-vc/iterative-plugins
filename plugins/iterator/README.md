@@ -1,32 +1,46 @@
-# iterator — ask questions about our deal flow
+# iterator — deal flow & the SF pipeline, in plain English
 
-This add-on connects Claude Code to the **Iterator CRM**, so you can ask about founders,
-companies, applications, cohorts, partner feedback, leads and the portfolio in plain English
-and get answers from the live data — not from Claude guessing.
+This add-on connects Claude Code to the **Iterator CRM**. Two things you get:
 
-## Install it
+- **Ask about deal flow** — founders, companies, applications, cohorts, partner feedback,
+  the portfolio — and get answers from the live data instead of Claude guessing. → `/iterator`
+- **Work the SF direct-deals lead pipeline** (internally **porygon**) — triage the inbox,
+  see what's in diligence, claim and pass on deals. → `/porygon` (or `/sf`)
 
-Type these **inside Claude Code** (see the [main README](../../README.md) if you haven't added
-the collection yet), then restart Claude Code:
+## Set it up
+
+Everything here is typed **inside Claude Code**, not a terminal.
+
+**1. Add the collection** (once per machine):
+
+```
+/plugin marketplace add iterative-vc/iterative-plugins
+```
+
+**2. Install the plugin:**
 
 ```
 /plugin install iterator@iterative
 ```
 
-When it asks where to install, choose **User scope** ("install for yourself across all
+When it asks *where* to install, choose **User scope** ("install for yourself across all
 projects") — Iterator is a CRM you'll want from any project, not just one repo.
+
+**3. Restart Claude Code** so it loads.
 
 ## Signing in
 
 The first time you ask Iterator something, a browser tab opens. Sign in with your
 **@iterative.vc** Google account — access is restricted to that domain, so a personal address
-will be turned away.
+will be turned away. This happens **once per computer**. After that it just works.
 
-This happens **once per computer**. After that it just works.
+(On a remote/headless box the browser step needs one extra move — see
+[Running Claude Code on a remote server](#running-claude-code-on-a-remote-server).)
 
-## Things you can ask
+## 1. Ask about deal flow — `/iterator`
 
-Put `/iterator` in front of your question:
+Put `/iterator` in front of a question, or just ask normally (see
+[the nudge](#it-usually-knows-when-to-check) below):
 
 ```
 /iterator how many companies applied to the current cohort?
@@ -36,13 +50,68 @@ Put `/iterator` in front of your question:
 /iterator summarize <partner>'s feedback style over the last 10 reviews
 ```
 
-You can also just ask normally. If your question sounds like a CRM question, Claude gets a
-quiet reminder to check Iterator rather than answer from memory — so "how's deal flow looking
-this batch?" usually does the right thing on its own.
+## 2. Work the SF lead pipeline — `/porygon` (or `/sf`)
+
+`/porygon` and `/sf` are two doors to the same room: the **SF direct-deals** working loop.
+
+**Two lanes.** Leads split into two pipelines, and it matters which one you mean:
+
+- **cohort** — the recruiting / batch pipeline (applications for a cohort). Spoken as
+  "cohort/batch leads", "W27 / current cohort", "SEA leads" (SEA is a location filter here,
+  not a separate pipeline).
+- **direct** — the **SF direct-deals** pipeline, aka **porygon** / pod porygon. Spoken as
+  "SF", "SF leads", "the SF pipeline", "porygon".
+
+`/porygon` and `/sf` drive the **direct / SF** lane. `/iterator` covers both lanes plus the
+rest of the CRM.
+
+**The SF stages**, start to finish:
+
+```
+sourced → qualified → contacted → reviewing → diligence → committed → invested
+```
+
+`sourced` = unclaimed, sitting in the inbox. `qualified` = someone claimed it and owns it.
+Then it moves through `contacted` → `reviewing` → `diligence` → `committed` → `invested`.
+Dead ends: **passed** / **lost** / **no_allocation**.
+
+**The things you do to a lead** (just say them):
+
+- **create** — add a lead (e.g. one that arrived by email)
+- **assign** — claim a `sourced` lead → it becomes `qualified` and you own it
+- **shortlist / unshortlist** — a personal bookmark (doesn't move the stage)
+- **pass** — reject it (→ a dead end)
+- **release** — hand an owned lead back to the unclaimed pool
+
+**Where leads come from** (the *source*): today SF leads are mostly **YC**, plus the odd
+**email** lead. New feeds show up as new sources, not new lanes.
+
+**Examples:**
+
+```
+/porygon what's the pipeline look like right now
+/porygon show me the SF leads in diligence
+/porygon what's unclaimed in the inbox
+/porygon assign the Acme deal to me
+/porygon a founder emailed me — add them as an SF lead
+/sf my leads across the active stages
+```
+
+The usual rhythm is **orient → explore → act**: start with a summary of what's in each stage,
+narrow down (by stage, owner, source, location, "new since last import"…), then act with the
+verbs above.
+
+## It usually knows when to check
+
+You don't have to prefix everything. When a question *sounds* like a CRM or lead question —
+"how's deal flow this batch?", "any new SF leads?", "what's in porygon?" — Claude gets a quiet
+reminder to check Iterator rather than answer from memory, and usually does the right thing on
+its own. The slash commands (`/iterator`, `/porygon`, `/sf`) just make it explicit and load
+the full playbook.
 
 ## How it answers
 
-Two house rules are built in, so you don't have to ask for them:
+Two house rules are built in, so you don't have to ask:
 
 - **Partner feedback always names who said it** — not just "the feedback was positive."
 - **All review stages are shown** (inbox review, first interview, final interview), not only
@@ -53,10 +122,10 @@ It's reading real records and can always show its work.
 
 ## If something isn't working
 
-- **Claude answers without checking the CRM** — say "use Iterator" explicitly, or start the
-  question with `/iterator`.
+- **Claude answers without checking the CRM** — say "use Iterator" explicitly, or start with
+  `/iterator` / `/porygon`.
 - **Sign-in fails** — it must be your `@iterative.vc` account.
-- **`/iterator` isn't recognized** — restart Claude Code after installing.
+- **`/iterator`, `/porygon`, or `/sf` isn't recognized** — restart Claude Code after installing.
 - **It says it can't find a table or field** — the CRM's structure changes; ask it to re-check
   the schema and try again.
 
@@ -69,20 +138,32 @@ It's reading real records and can always show its work.
 - **`.mcp.json`** — direct HTTPS connection to the Iterator MCP server (`type: http`,
   a Supabase edge function). OAuth is per-user and gated to `iterative.vc` emails; no
   credentials are stored here.
-- **`commands/iterator.md`** — the `/iterator <question>` slash command. Enforces:
-  load tools → `describe_schema` → `run_sql`, answer from live data, and (per house style)
-  name who gave feedback and show all stages.
+- **`commands/iterator.md`** — the `/iterator <question>` slash command. Carries the full
+  toolset guidance and the **two-lane leads model** (cohort vs direct/SF), and enforces:
+  load tools → `describe_schema` → the Iterator tools / `run_sql`, answer from live data, and
+  (per house style) name who gave feedback and show all stages.
+- **`commands/porygon.md`** + **`commands/sf.md`** — the SF direct-deals (porygon) working
+  loop: the direct-lane stages, the action verbs, sources, and the orient→explore→act flow.
+  `/sf` is a thin alias for `/porygon`.
 - **`hooks/hooks.json`** + **`scripts/iterator-nudge.sh`** — a `UserPromptSubmit` hook that
-  injects a reminder to use Iterator when the prompt looks like a CRM / deal-flow question.
+  injects a reminder to use Iterator when a prompt looks like a CRM / deal-flow / **lead**
+  question (it matches lead / SF / porygon vocabulary too), and hands Claude the lane model.
 
-**Query conventions** (baked into `/iterator`)
+**Query conventions** (baked into the commands)
 
-- `describe_schema` first — join paths are grant-driven and not guessable.
-- `run_sql` for counting / aggregation / ranking; base tables for custom aggregation,
-  `*_directory` / `*_active` projections for pre-derived flags.
+- `describe_schema` first — join paths and enum values are grant-driven and not guessable.
+- Prefer the Iterator **lead tools** for lead work; use `run_sql` for counting / aggregation /
+  ranking the tools can't express. Base tables for custom aggregation, `*_directory` /
+  `*_active` projections for pre-derived flags.
 - "Active cohort" = `cohort.status = 'recruiting'`, never a name match.
-- Partner feedback lives one row per `partner × stage × application`; join
+- Leads live in one `lead` table split by a `lane` column (`cohort` vs `direct`); the SF lane
+  is `direct`. Partner feedback lives one row per `partner × stage × application`; join
   `feedback → profile → person` to resolve a partner's name.
+
+> **Tool availability.** The lead-specific tools are rolling out; the guidance names them as
+> examples (`find_leads` / `leads_summary` / `create_lead`) but falls back to the always-present
+> `list_leads` / `get_lead` / `run_sql`, so the commands work whatever the server currently
+> exposes.
 
 ### Running Claude Code on a remote server
 
