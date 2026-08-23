@@ -43,14 +43,41 @@ stage + owner (me / none / name) + shortlist + source + geography (location) + s
 direct lane, `stage = diligence`; "what's unclaimed" = direct, `stage = sourced`,
 `owner = none`.
 
-**Bare `/sf` (no request):** only run the **summary** tool, show a short readout (totals
-per non-zero stage + your owned/shortlisted + untriaged/newest import), then **ask** what
-they want. **Do not** call `find_leads` / `list_leads` or dump rows on a bare invocation.
+**Bare `/sf` (no request):** only run the **summary** tool, then **ask** what they want. Do
+NOT call `find_leads` / `list_leads` or dump rows. Render the summary as a small table — the
+stage funnel with a Total, then your personal queue and the triage line (shortlist is a
+personal bookmark, not a stage, so it goes with "your queue"):
+
+```
+SF (direct) pipeline
+
+  STAGE        LEADS
+  Sourced        827
+  …                …          (stages in pipeline order; a Total row at the bottom)
+  Total          827
+
+  Your queue:  0 owned · 0 shortlisted
+  Triage:      827 to triage · newest import 20260823 (827 new)
+
+What do you want — triage the inbox, drill into a stage, or see your own queue?
+```
 
 **Never dump raw rows.** The lead tools return big rows (nested `signals` / `launches` /
-company / founder). When you list leads, give **one line each** (`Company · Founder — stage ·
-owner · top signal`), default to ~10, and offer to narrow if there are more — never echo the
-raw JSON. Pull full detail (`get_lead`) only for a specific lead the user named.
+company / founder). Render each lead as a **compact card**, not JSON — stage as a leading
+tag (its own thing, not tacked onto the founder), then company, a one-liner, a meta line:
+
+```
+[SOURCED]  Tasklet — Andrew Lee
+           "AI agents that connect to your tools and run 24/7 to get work done"
+           YC #31470 · unclaimed · B2B · San Francisco
+           Signal: $20M raise at $175M val
+```
+
+`[STAGE]` caps leading · **Company — Founder** title · one-liner from the tagline if any ·
+meta line `source (+ YC id) · owner or unclaimed · industry · location` · **Signal:** the
+strongest signal on its own line · **blank line between leads**. Default ~10; if there are
+more, say how many and offer to narrow. Pull full detail (`get_lead`) only for a lead the
+user names.
 
 ## Discipline
 

@@ -54,10 +54,12 @@ To work leads, orient with a pipeline **summary**, then **explore** filtered by 
 aggregation those can't express. `/porygon` (or `/sf`) is the dedicated SF working loop.
 
 Lead rows are **big** (nested `signals` / `launches` / company / founder) — never echo the
-raw JSON. Summarize to **one line per lead** (`Company · Founder — stage · owner · top
-signal`), default to ~10, and offer to narrow if there are more; pull full detail
-(`get_lead`) only for a specific lead. A pipeline that just imported can be hundreds of
-leads, so lead with the **summary**, not a dump.
+raw JSON. Render each lead as a **compact card**: a leading `[STAGE]` tag, then
+`Company — Founder`, a one-liner from the tagline if any, a meta line (`source (+ YC id) ·
+owner or unclaimed · industry · location`), and the strongest **Signal:** on its own line —
+blank line between leads. Default ~10 and offer to narrow if there are more; pull full detail
+(`get_lead`) only for a named lead. A pipeline that just imported can be hundreds of leads,
+so lead with the **summary**, not a dump.
 
 Workflow:
 
