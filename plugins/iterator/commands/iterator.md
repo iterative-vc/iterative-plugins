@@ -23,6 +23,36 @@ Pick the narrowest tool that fits: `get_*`/`list_*`/`search`/`journey` for looku
 directory questions; `run_sql` for anything that counts, aggregates, ranks, or joins across
 entities.
 
+## Leads: two lanes
+
+Leads live in one `lead` table split by a **lane** column — know which lane a request means:
+
+- **cohort** — the recruiting / batch pipeline. Spoken as "cohort/batch leads",
+  "W27 / current cohort", "SEA leads" (SEA is a **geography** filter, not a lane).
+  Stages: `sourced → contacted → engaged → applying → applied` (terminal: `dropped`).
+- **direct** — the **SF direct-deals** pipeline, internally **porygon** (pod porygon).
+  Spoken as "SF", "SF leads", "SF pipeline", "porygon". Stages:
+  `sourced` (unclaimed inbox / triage) → `qualified` (claimed/shortlisted, owned) →
+  `contacted` (we reached out) → `reviewing` (back-and-forth) → `diligence` (diligencing) →
+  `committed` → `invested`; terminal: `passed` / `lost` / `no_allocation`.
+
+**Action verbs:** **create** (add a lead, e.g. one that arrived by email), **assign**
+(pick up a `sourced` lead → `qualified`, you own it), **shortlist/unshortlist** (personal
+bookmark), **pass** (reject → terminal), **release** (return an owned lead to the pool).
+
+**Sources:** each lead has a source — direct leads are mostly **YC** (`yc_intel`) plus
+**email**. New feeds are additional direct **sources**, not new lanes.
+
+**Phrase → intent:** "porygon leads in diligence" = direct lane, `stage = diligence`;
+"current cohort SEA leads" = cohort lane, current cohort, location SEA; "what's unclaimed" =
+direct lane, `stage = sourced`, `owner = none`.
+
+To work leads, orient with a pipeline **summary**, then **explore** filtered by lane + stage
++ owner (me/none/name) + shortlist + source + geography + "new since last import", then
+**act** with the verbs — via the Iterator **lead tools** (e.g. `find_leads` / `leads_summary`
+/ `create_lead` once available, otherwise `list_leads` / `get_lead`); use `run_sql` only for
+aggregation those can't express. `/porygon` (or `/sf`) is the dedicated SF working loop.
+
 Workflow:
 
 1. **Load the tools if needed.** The Iterator tools may be deferred. If they aren't already

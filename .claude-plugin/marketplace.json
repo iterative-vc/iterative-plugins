@@ -10,8 +10,8 @@
     {
       "name": "iterator",
       "source": "iterator",
-      "description": "Iterator CRM access from Claude Code: bundles the Iterator MCP connection, an /iterator slash command, and a keyword nudge so Claude reaches for the CRM when it should.",
-      "version": "0.1.0"
+      "description": "Iterator CRM access from Claude Code: bundles the Iterator MCP connection, /iterator + /porygon + /sf slash commands (incl. the two-lane cohort vs SF/direct lead model), and a keyword nudge so Claude reaches for the CRM when it should.",
+      "version": "0.2.0"
     }
   ]
 }
