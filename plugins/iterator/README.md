@@ -141,13 +141,17 @@ It's reading real records and can always show its work.
 - **`.mcp.json`** — direct HTTPS connection to the Iterator MCP server (`type: http`,
   a Supabase edge function). OAuth is per-user and gated to `iterative.vc` emails; no
   credentials are stored here.
-- **`commands/iterator.md`** — the `/iterator <question>` slash command. Carries the full
+- **`skills/iterator/SKILL.md`** — the `/iterator <question>` command. Carries the full
   toolset guidance and the **two-lane leads model** (cohort vs direct/SF), and enforces:
   load tools → `describe_schema` → the Iterator tools / `run_sql`, answer from live data, and
   (per house style) name who gave feedback and show all stages.
-- **`commands/porygon.md`** + **`commands/sf.md`** — the SF direct-deals (porygon) working
-  loop: the direct-lane stages, the action verbs, sources, and the orient→explore→act flow.
-  `/sf` is a thin alias for `/porygon`.
+- **`skills/porygon/SKILL.md`** + **`skills/sf/SKILL.md`** — the SF direct-deals (porygon)
+  working loop: the direct-lane stages, the action verbs, sources, and the orient→explore→act
+  flow. `/sf` is a thin alias for `/porygon`.
+- These ship as **skills** (not `commands/`) so each works both bare (`/porygon`) and
+  namespaced (`/iterator:porygon`); a plain command only registers the namespaced form. They
+  set `disable-model-invocation: true`, so they run only when you type them, not on Claude's
+  own initiative.
 - **`hooks/hooks.json`** + **`scripts/iterator-nudge.sh`** — a `UserPromptSubmit` hook that
   injects a reminder to use Iterator when a prompt looks like a CRM / deal-flow / **lead**
   question (it matches lead / SF / porygon vocabulary too), and hands Claude the lane model.

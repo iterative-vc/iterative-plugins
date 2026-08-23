@@ -1,6 +1,8 @@
 ---
+name: porygon
 description: Work the SF direct-deals (porygon) lead pipeline via Iterator
 argument-hint: <what you want to do — e.g. "leads in diligence", "unclaimed inbox", "assign this one to me">
+disable-model-invocation: true
 ---
 
 You are working the **SF direct-deals pipeline** — internally **porygon** (pod porygon) —

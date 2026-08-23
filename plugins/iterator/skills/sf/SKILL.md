@@ -1,6 +1,8 @@
 ---
+name: sf
 description: Work the SF direct-deals lead pipeline via Iterator (alias for /porygon)
 argument-hint: <what you want to do — e.g. "leads in diligence", "unclaimed inbox", "assign this one to me">
+disable-model-invocation: true
 ---
 
 **`/sf` is `/porygon`** — two doors, one room. This runs the SF direct-deals lead playbook
