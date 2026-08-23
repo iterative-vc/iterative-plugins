@@ -5,7 +5,7 @@ This add-on connects Claude Code to the **Iterator CRM**. Two things you get:
 - **Ask about deal flow** — founders, companies, applications, cohorts, partner feedback,
   the portfolio — and get answers from the live data instead of Claude guessing. → `/iterator`
 - **Work the SF direct-deals lead pipeline** (internally **porygon**) — triage the inbox,
-  see what's in diligence, claim and pass on deals. → `/porygon` (or `/sf`)
+  see what's in diligence, claim and pass on deals. → `/porygon`
 
 ## Set it up
 
@@ -50,9 +50,9 @@ Put `/iterator` in front of a question, or just ask normally (see
 /iterator summarize <partner>'s feedback style over the last 10 reviews
 ```
 
-## 2. Work the SF lead pipeline — `/porygon` (or `/sf`)
+## 2. Work the SF lead pipeline — `/porygon`
 
-`/porygon` and `/sf` are two doors to the same room: the **SF direct-deals** working loop.
+`/porygon` is the **SF direct-deals** working loop.
 
 **Two lanes.** Leads split into two pipelines, and it matters which one you mean:
 
@@ -62,8 +62,8 @@ Put `/iterator` in front of a question, or just ask normally (see
 - **direct** — the **SF direct-deals** pipeline, aka **porygon** / pod porygon. Spoken as
   "SF", "SF leads", "the SF pipeline", "porygon".
 
-`/porygon` and `/sf` drive the **direct / SF** lane. `/iterator` covers both lanes plus the
-rest of the CRM.
+`/porygon` drives the **direct / SF** lane. `/iterator` covers both lanes plus the rest of
+the CRM.
 
 **The SF stages**, start to finish:
 
@@ -94,7 +94,7 @@ Dead ends: **passed** / **lost** / **no_allocation**.
 /porygon what's unclaimed in the inbox
 /porygon assign the Acme deal to me
 /porygon a founder emailed me — add them as an SF lead
-/sf my leads across the active stages
+/porygon my leads across the active stages
 ```
 
 The usual rhythm is **orient → explore → act**: start with a summary of what's in each stage,
@@ -106,7 +106,7 @@ verbs above.
 You don't have to prefix everything. When a question *sounds* like a CRM or lead question —
 "how's deal flow this batch?", "any new SF leads?", "what's in porygon?" — Claude gets a quiet
 reminder to check Iterator rather than answer from memory, and usually does the right thing on
-its own. The slash commands (`/iterator`, `/porygon`, `/sf`) just make it explicit and load
+its own. The slash commands (`/iterator`, `/porygon`) just make it explicit and load
 the full playbook.
 
 ## How it answers
@@ -125,7 +125,7 @@ It's reading real records and can always show its work.
 - **Claude answers without checking the CRM** — say "use Iterator" explicitly, or start with
   `/iterator` / `/porygon`.
 - **Sign-in fails** — it must be your `@iterative.vc` account.
-- **`/iterator`, `/porygon`, or `/sf` isn't recognized** — restart Claude Code after installing.
+- **`/iterator` or `/porygon` isn't recognized** — restart Claude Code after installing.
 - **A fix or new command isn't showing up** — you're still on the version you launched with.
   Run `/plugin marketplace update iterative` then `/reload-plugins` (add `--force` if it asks,
   or just restart). Updates on disk don't apply to the running session until you reload.
@@ -145,15 +145,12 @@ It's reading real records and can always show its work.
   toolset guidance and the **two-lane leads model** (cohort vs direct/SF), and enforces:
   load tools → `describe_schema` → the Iterator tools / `run_sql`, answer from live data, and
   (per house style) name who gave feedback and show all stages.
-- **`skills/porygon/SKILL.md`** + **`skills/sf/SKILL.md`** — the SF direct-deals (porygon)
-  working loop: the direct-lane stages, the action verbs, sources, and the orient→explore→act
-  flow. `/sf` is a thin alias for `/porygon`.
+- **`skills/porygon/SKILL.md`** — the SF direct-deals (porygon) working loop: the direct-lane
+  stages, the action verbs, sources, and the orient→explore→act flow.
 - These ship as **skills** (not `commands/`) so each works both bare (`/porygon`) and
-  namespaced (`/iterator:porygon`); a plain command only registers the namespaced form.
-  `/iterator` and `/porygon` are **model-invocable** — Claude can reach for them on its own
-  when a question fits their `description` (e.g. "how's the SF pipeline?"), as well as when
-  you type them. `/sf` is a manual-only alias (`disable-model-invocation: true`) so it doesn't
-  compete with `/porygon` as an auto-invoke target.
+  namespaced (`/iterator:porygon`); a plain command only registers the namespaced form. Both
+  are **model-invocable** — Claude can reach for them on its own when a question fits their
+  `description` (e.g. "how's the SF pipeline?"), as well as when you type them.
 - **`hooks/hooks.json`** + **`scripts/iterator-nudge.sh`** — a `UserPromptSubmit` hook that
   injects a reminder to use Iterator when a prompt looks like a CRM / deal-flow / **lead**
   question (it matches lead / SF / porygon vocabulary too), and hands Claude the lane model.

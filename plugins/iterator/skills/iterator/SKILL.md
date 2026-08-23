@@ -52,7 +52,7 @@ To work leads, orient with a pipeline **summary**, then **explore** filtered by 
 + owner (me/none/name) + shortlist + source + geography + "new since last import", then
 **act** with the verbs — via the Iterator **lead tools** (e.g. `find_leads` / `leads_summary`
 / `create_lead` once available, otherwise `list_leads` / `get_lead`); use `run_sql` only for
-aggregation those can't express. `/porygon` (or `/sf`) is the dedicated SF working loop.
+aggregation those can't express. `/porygon` is the dedicated SF working loop.
 
 Lead rows are **big** (nested `signals` / `launches` / company / founder) — never echo the
 raw JSON. Render each lead as a **compact card**: a leading `[STAGE]` tag, then
