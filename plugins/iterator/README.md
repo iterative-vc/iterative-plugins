@@ -126,6 +126,9 @@ It's reading real records and can always show its work.
   `/iterator` / `/porygon`.
 - **Sign-in fails** — it must be your `@iterative.vc` account.
 - **`/iterator`, `/porygon`, or `/sf` isn't recognized** — restart Claude Code after installing.
+- **A fix or new command isn't showing up** — you're still on the version you launched with.
+  Run `/plugin marketplace update iterative` then `/reload-plugins` (add `--force` if it asks,
+  or just restart). Updates on disk don't apply to the running session until you reload.
 - **It says it can't find a table or field** — the CRM's structure changes; ask it to re-check
   the schema and try again.
 

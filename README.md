@@ -44,11 +44,17 @@ use your **@iterative.vc** Google account. That's once per computer, not once pe
 
 ## Getting updates
 
-When someone adds a new add-on or improves an existing one:
+When someone adds a new add-on or improves an existing one, pull the latest catalog **and**
+reload — an update on disk doesn't take effect in your current session until you reload:
 
 ```
 /plugin marketplace update iterative
+/reload-plugins
 ```
+
+If `/reload-plugins` warns that it'll re-read the conversation, run `/reload-plugins --force`
+(or just restart Claude Code). Until you reload, you keep running the version you launched
+with — so if a fix "isn't there," you probably haven't reloaded yet.
 
 ## If something isn't working
 
