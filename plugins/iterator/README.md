@@ -136,6 +136,18 @@ The usual rhythm is **orient → explore → act**: start with a summary of what
 narrow down (by stage, owner, source, location, "new since last import"…), then act with the
 verbs above.
 
+### Blitz the inbox — `/tinderate`
+
+When you just want to clear the unclaimed inbox, `/tinderate` walks it **10 at a time** in
+full detail — **shortlisted-by-anyone first**, then the strongest leads — and you `assign`,
+`shortlist`, or `pass` your way through, `next` for the next 10. Pass a filter to narrow it:
+
+```
+/tinderate
+/tinderate SEA founders
+/tinderate B2B with a raise signal
+```
+
 ## It usually knows when to check
 
 You don't have to prefix everything. When a question *sounds* like a CRM or lead question —
@@ -182,6 +194,9 @@ It's reading real records and can always show its work.
   (per house style) name who gave feedback and show all stages.
 - **`skills/porygon/SKILL.md`** — the SF direct-deals (porygon) working loop: the direct-lane
   stages, the action verbs, sources, and the orient→explore→act flow.
+- **`skills/tinderate/SKILL.md`** — a triage loop over the unclaimed `sourced` inbox: 10
+  full-detail cards at a time, shortlisted-first, then assign / shortlist / pass and `next`.
+  Manual-only (`disable-model-invocation: true`) — you start a tinderate session deliberately.
 - These ship as **skills** (not `commands/`) so each works both bare (`/porygon`) and
   namespaced (`/iterator:porygon`); a plain command only registers the namespaced form. Both
   are **model-invocable** — Claude can reach for them on its own when a question fits their
