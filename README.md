@@ -20,7 +20,7 @@ the line, press enter.
 **1. Add the collection.** You only ever do this once:
 
 ```
-/plugin marketplace add Iterative-VC/iterative-plugins
+/plugin marketplace add iterative-vc/iterative-plugins
 ```
 
 **2. Install what you want:**
@@ -28,6 +28,11 @@ the line, press enter.
 ```
 /plugin install iterator@iterative
 ```
+
+Claude Code will ask **where** to install it — pick **User scope** ("install for yourself
+across all projects"). Iterator is a CRM you'll want from *any* project, not just one repo,
+so User is the right choice. (The other options — Project and Local — tie it to a single
+repository.)
 
 **3. Restart Claude Code** so it picks everything up.
 
