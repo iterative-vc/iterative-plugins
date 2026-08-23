@@ -48,6 +48,8 @@ Put `/iterator` in front of a question, or just ask normally (see
 /iterator which companies applied more than once and still got in?
 /iterator show me the highest-rated applications we passed on
 /iterator summarize <partner>'s feedback style over the last 10 reviews
+/iterator which portfolio companies came through the SF pipeline?
+/iterator show <founder>'s journey from lead to today
 ```
 
 ## 2. Work the SF lead pipeline — `/porygon`
@@ -86,15 +88,48 @@ Dead ends: **passed** / **lost** / **no_allocation**.
 **Where leads come from** (the *source*): today SF leads are mostly **YC**, plus the odd
 **email** lead. New feeds show up as new sources, not new lanes.
 
-**Examples:**
+**Examples** — a Monday on the pod, a fresh batch of YC leads just landed:
 
+_Orient_
 ```
-/porygon what's the pipeline look like right now
-/porygon show me the SF leads in diligence
-/porygon what's unclaimed in the inbox
-/porygon assign the Acme deal to me
-/porygon a founder emailed me — add them as an SF lead
-/porygon my leads across the active stages
+/porygon
+/porygon what came in since the last import
+/porygon break the inbox down by industry
+/porygon how many untriaged leads carry a real signal
+```
+
+_Triage the unclaimed inbox_
+```
+/porygon what's unclaimed
+/porygon top unclaimed leads by launch votes
+/porygon unclaimed B2B leads that raised recently
+/porygon the SEA cluster in the current inbox
+```
+
+_Explore_
+```
+/porygon SF leads in diligence
+/porygon everything past first contact (contacted → committed)
+/porygon leads owned by Jordan
+/porygon anything with a $10M+ raise signal
+/porygon healthcare leads in reviewing or diligence
+```
+
+_Act (the verbs)_
+```
+/porygon assign the Tasklet lead to me
+/porygon shortlist RonanRx
+/porygon pass on the ones with no signal and a tiny team
+/porygon release the Billow lead back to the pool
+/porygon a founder emailed me — add Acme (acme.ai) as an SF lead, source email
+```
+
+_Your queue / drill in_
+```
+/porygon my leads in diligence
+/porygon my shortlist
+/porygon anything of mine gone stale — no movement in 2 weeks
+/porygon full detail on Tasklet
 ```
 
 The usual rhythm is **orient → explore → act**: start with a summary of what's in each stage,
