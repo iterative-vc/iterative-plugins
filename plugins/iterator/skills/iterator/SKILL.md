@@ -1,5 +1,6 @@
 ---
-description: Query the Iterator CRM (Iterative deal-flow / portfolio) via the Iterator MCP
+name: iterator
+description: Query the Iterator CRM (Iterative deal-flow / portfolio) via the Iterator MCP — founders, companies, applications, cohorts, partner feedback, leads, portfolio. Use for any question about Iterative's deal flow that should be answered from live CRM data rather than memory.
 argument-hint: <question about founders, companies, applications, cohorts, or partner feedback>
 ---
 
@@ -49,9 +50,10 @@ direct lane, `stage = sourced`, `owner = none`.
 
 To work leads, orient with a pipeline **summary**, then **explore** filtered by lane + stage
 + owner (me/none/name) + shortlist + source + geography + "new since last import", then
-**act** with the verbs — via the Iterator **lead tools** (e.g. `find_leads` / `leads_summary`
-/ `create_lead` once available, otherwise `list_leads` / `get_lead`); use `run_sql` only for
-aggregation those can't express. `/porygon` (or `/sf`) is the dedicated SF working loop.
+**act** with the verbs — via the Iterator **lead tools** (`find_leads` / `leads_summary` /
+`create_lead` / `get_lead`, all live); use `run_sql` for the founder-LinkedIn join
+(`person.linkedin_url`) or aggregation those can't express. `/porygon` is the dedicated SF
+working loop.
 
 Lead rows are **big** (nested `signals` / `launches` / company / founder) — never echo the
 raw JSON. Render each lead as a **compact card**: a leading `[STAGE]` tag, then
