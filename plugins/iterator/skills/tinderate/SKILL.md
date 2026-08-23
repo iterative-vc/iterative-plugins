@@ -33,8 +33,8 @@ Query the live data with the Iterator lead tools — **never guess**.
 
 1. **Orient (one line).** How many unclaimed sourced leads match right now, and how many of
    those are shortlisted. E.g. `312 unclaimed match "SEA" — 4 shortlisted. Here are the first 10:`
-2. **Pull the next 10** in the order above and render them as a **table** (format below),
-   numbered `1`–`10` so the user can act by number. Keep it scannable — one row per lead.
+2. **Pull the next 10** in the order above and render them as a **scannable list** (below),
+   numbered `1`–`10` so the user can act by number.
 3. **Offer the actions**, then **stop and wait** — don't act until the user replies:
    ```
    Reply: assign <n…> · shortlist <n…> · pass <n…> · expand <n> · next · or a new filter (e.g. "only SEA")
@@ -48,56 +48,29 @@ Query the live data with the Iterator lead tools — **never guess**.
 Never dump the whole inbox — **at most 10 rows per turn.** A batch can be one import of many
 hundreds of leads.
 
-## Batch format (a table of 10)
+## Rendering — principles, not a fixed template
 
-Render the 10 as a compact **markdown table** — it renders in the terminal and scans fast for
-rapid triage. **Every URL a clickable markdown link** (`[label](url)`), never bare text:
+Use your judgment on layout; the goal is fast triage, not a pixel-perfect spec.
 
-```
-| # | Company | Founder | Focus | Top signal | Launch |
-|--:|---------|---------|-------|-----------|--------|
-| 1 ★2 | [Tasklet](https://tasklet.ai) | [Andrew Lee](https://linkedin.com/in/andrewlee) | B2B · SF | $20M raise ($175M val) | [39▲](https://www.ycombinator.com/launches/PsX-tasklet-…) · [▶](https://youtu.be/sriwtDYi6XQ) |
-| 2 | [Clara](https://askclara.com) | [George Favvas](https://linkedin.com/in/gfavvas) | Healthcare · SF | $12M seed | [11▲](https://www.ycombinator.com/launches/QMs-clara-…) |
-```
+**The batch (10 leads):** a **scannable list** — a compact markdown table is usually right; a
+tight one-or-two-line block per lead is fine when the one-liner earns its place (let it wrap).
+Per lead show only what aids a decision: the **index** (with **★N** when shortlisted), the
+**company**, **founder(s)**, **focus** (industry · location), the **top signal**, and the
+**launch(es)** (votes). **Keep the batch clean — no long URLs here.**
 
-- **#** — the index to act by. Append the shortlist count as **★N** when >0 (why it's near the
-  top; nothing when zero).
-- **Company** → site (`website`/`domain`); **Founder** → `person.linkedin_url`; **Launch** →
-  the top launch's votes linked to the post, plus `· [▶](video_url)` when there's media.
-- **Focus** = industry · location. **Top signal** = the single strongest — the table is a scan.
-- One line per lead. Don't wrap cells with paragraphs; that's what `expand` is for.
-
-## Expand one (the full card)
-
-On `expand <n>` (or when the user names a lead), show that single lead in full — a company with
-its **founder(s)**, all **launches**, and all **signals**:
-
-```
-─ Tasklet · ★2 · SOURCED ────────────────────────────
-**[Tasklet](https://tasklet.ai)** · B2B · San Francisco · 8 people · YC #31470
-Andrew Lee — repeat founder — [LinkedIn ↗](https://linkedin.com/in/andrewlee)
-"AI agents that connect to your tools and run 24/7 to get real work done"
-Signals: $20M raise ($175M val) · $5M ARR (+1200% since Jan)
-Launches
-  • [The cloud agent OS for knowledge work](https://www.ycombinator.com/launches/PsX-tasklet-…) — 39 ▲ · [video ↗](https://youtu.be/sriwtDYi6XQ)
-```
-
-- **Company line:** name → site, then industry · location · team size · source (+ YC id).
-- **Founder line(s):** one per founder — name, a pedigree flag if notable, and **[LinkedIn ↗]**
-  → `person.linkedin_url`. List co-founders each on their own line. Link LinkedIn **only when a
-  URL exists** — never invent one.
-- **Pitch:** the launch tagline / one-liner (skip if none).
-- **Signals:** the notable ones (raises, traction, contracts), deduped; link a `source_url`
-  when useful.
-- **Launches:** **every** launch (it's an array), each `• [tagline](launch_url) — N ▲` plus
-  `· [video ↗](video_url)` per media; use `get_lead` for the full dossier if the batch payload
-  is thin.
+**`expand <n>` (one lead in full):** the whole dossier — company, **every founder**, the
+one-liner (let it wrap), **all signals**, and **every launch** with its post + video. Here,
+show links as **raw URLs** (company site, each founder `person.linkedin_url`, each launch post
++ `video_url`), not `[label](url)` — hidden-label links render as unclickable decorative text
+in some terminals (e.g. SSH iTerm2), so a visible URL is both openable and copyable. Never
+invent a URL; omit what's missing. `get_lead` backs the full dossier.
 
 ## Discipline
 
 1. **Load the tools if deferred** (`ToolSearch` for "Iterator").
-2. **`describe_schema` first** — the real `lane` / `stage` / shortlist / `source` fields and
-   enum values are grant-driven, not guessable.
+2. **Go straight to the lead tools — don't call `describe_schema` for a normal run.** You know
+   the filters (`lane=direct, stage=sourced, owner=none`). Reach for `describe_schema` only if a
+   query needs an unfamiliar column, and read it **via a subagent** — never dump the blob inline.
 3. **Use the Iterator lead tools** (all live in prod): `leads_summary` for the count,
    `find_leads` (`lane=direct, stage=sourced, owner=none`, ordered, `limit=10`) for the batch,
    `get_lead` for full detail, the action verbs to act. Reserve `run_sql` for the ordered id
