@@ -1,8 +1,8 @@
 {
   "name": "iterator",
   "displayName": "Iterator (Iterative CRM)",
-  "version": "0.1.0",
-  "description": "Query Iterative's Iterator CRM from Claude Code. Bundles the Iterator MCP connection, an /iterator slash command, and a UserPromptSubmit hook that nudges Claude to use the CRM when a prompt looks like a deal-flow/founders/applications question.",
+  "version": "0.2.0",
+  "description": "Query Iterative's Iterator CRM from Claude Code. Bundles the Iterator MCP connection, /iterator + /porygon (SF direct-deals lead loop) + /sf slash commands, and a UserPromptSubmit hook that nudges Claude to use the CRM — with the two-lane lead model (cohort vs SF/direct) — when a prompt looks like a deal-flow/founders/applications/leads question.",
   "author": {
     "name": "Iterative"
   },
@@ -14,6 +14,9 @@
     "deal-flow",
     "founders",
     "applications",
-    "portfolio"
+    "portfolio",
+    "leads",
+    "porygon",
+    "sf"
   ]
 }
