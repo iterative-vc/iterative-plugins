@@ -3,13 +3,10 @@
   "owner": {
     "name": "Iterative"
   },
-  "metadata": {
-    "pluginRoot": "./plugins"
-  },
   "plugins": [
     {
       "name": "iterator",
-      "source": "iterator",
+      "source": "./plugins/iterator",
       "description": "Iterator CRM access from Claude Code: bundles the Iterator MCP connection, /iterator + /porygon slash commands (incl. the two-lane cohort vs SF/direct lead model), and a keyword nudge so Claude reaches for the CRM when it should.",
       "version": "0.3.0"
     }

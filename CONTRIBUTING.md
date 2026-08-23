@@ -73,12 +73,14 @@ the rest.
    ```json
    {
      "name": "my-plugin",
-     "source": "my-plugin",
+     "source": "./plugins/my-plugin",
      "description": "One line users see when installing.",
      "version": "0.1.0"
    }
    ```
-   (`source` is just the folder name — `metadata.pluginRoot` is set to `./plugins`.)
+   (`source` is the path to the plugin folder, relative to the repo root, and must start
+   with `./`. Use the full `./plugins/<name>` path — the bare-folder-name shorthand needs
+   Claude Code v2.1.239+ and fails to install on older versions.)
 
 Then open a PR. Once merged, teammates get it with `/plugin marketplace update iterative`.
 
