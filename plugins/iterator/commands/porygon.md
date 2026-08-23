@@ -54,6 +54,33 @@ occasional **email** lead. New feeds are additional direct **sources**, not new 
    + **signal** + **"new since last import"**.
 3. **Act** with the verbs above.
 
+### No request given (bare `/porygon`)
+
+If `$ARGUMENTS` is empty, **only orient, then stop and ask.** Run the pipeline **summary**
+tool once, render it as the short readout below, and ask what they want to do next. **Do
+NOT call `find_leads` / `list_leads` or dump any lead rows on a bare invocation** — a fresh
+import can be hundreds of leads, and each row is large.
+
+Summary readout (a few lines, not JSON):
+
+```
+SF (direct) pipeline — <total> leads
+  <stage>: <n>   <stage>: <n>   …    (only non-zero stages)
+  mine: <owned> owned · <shortlist> shortlisted
+  <to_triage> untriaged · newest import <batch> (<count> new)
+What do you want — triage the inbox, see a stage, or your own leads?
+```
+
+## Output discipline (never dump raw rows)
+
+The lead tools return **big** rows (nested `signals`, `launches`, full company/founder
+objects). Never echo that JSON at the user. When you list leads:
+
+- **One line per lead**, e.g. `Company · Founder — stage · owner · top signal (e.g. "$20M raise")`.
+- **Default to a small page** (~10). If there are more, say how many and offer to narrow,
+  not to fetch them all.
+- Only pull full detail (`get_lead`) for a **specific** lead the user pointed at.
+
 ## Worked examples (phrase → what to do)
 
 - **"porygon leads in diligence"** → direct lane, `stage = diligence`. List them.
@@ -75,4 +102,4 @@ occasional **email** lead. New feeds are additional direct **sources**, not new 
    for aggregation the lead tools can't express (and check `describe_schema` first for the
    real `lead.lane` / `lead.stage` / `lead.source` values before hand-writing filters).
 
-Request: $ARGUMENTS
+Request (if empty, follow "No request given" above — summary only, then ask): $ARGUMENTS

@@ -53,6 +53,12 @@ To work leads, orient with a pipeline **summary**, then **explore** filtered by 
 / `create_lead` once available, otherwise `list_leads` / `get_lead`); use `run_sql` only for
 aggregation those can't express. `/porygon` (or `/sf`) is the dedicated SF working loop.
 
+Lead rows are **big** (nested `signals` / `launches` / company / founder) — never echo the
+raw JSON. Summarize to **one line per lead** (`Company · Founder — stage · owner · top
+signal`), default to ~10, and offer to narrow if there are more; pull full detail
+(`get_lead`) only for a specific lead. A pipeline that just imported can be hundreds of
+leads, so lead with the **summary**, not a dump.
+
 Workflow:
 
 1. **Load the tools if needed.** The Iterator tools may be deferred. If they aren't already

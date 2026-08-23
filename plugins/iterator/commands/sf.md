@@ -43,6 +43,15 @@ stage + owner (me / none / name) + shortlist + source + geography (location) + s
 direct lane, `stage = diligence`; "what's unclaimed" = direct, `stage = sourced`,
 `owner = none`.
 
+**Bare `/sf` (no request):** only run the **summary** tool, show a short readout (totals
+per non-zero stage + your owned/shortlisted + untriaged/newest import), then **ask** what
+they want. **Do not** call `find_leads` / `list_leads` or dump rows on a bare invocation.
+
+**Never dump raw rows.** The lead tools return big rows (nested `signals` / `launches` /
+company / founder). When you list leads, give **one line each** (`Company · Founder — stage ·
+owner · top signal`), default to ~10, and offer to narrow if there are more — never echo the
+raw JSON. Pull full detail (`get_lead`) only for a specific lead the user named.
+
 ## Discipline
 
 Load the Iterator tools if deferred (`ToolSearch` for "Iterator"), call `describe_schema`
@@ -51,4 +60,4 @@ first, and use the Iterator **lead tools** — e.g. `find_leads` / `leads_summar
 aggregation the lead tools can't express. For the fuller writeup, `/porygon` and
 `/iterator` carry the same model.
 
-Request: $ARGUMENTS
+Request (if empty: summary only, then ask — see "Bare `/sf`" above): $ARGUMENTS
