@@ -80,8 +80,10 @@ Launches
 ## Discipline
 
 1. **Load the tools if deferred** (`ToolSearch` for "Iterator").
-2. **`describe_schema` first** — the real `lane` / `stage` / shortlist / `source` fields and
-   enum values are grant-driven, not guessable.
+2. **Go straight to the lead tools — don't call `describe_schema` for a normal run.** You
+   already know the filters (`lane=direct, stage=sourced, owner=none`). Only reach for
+   `describe_schema` if a query genuinely needs an unfamiliar column, and read it **via a
+   subagent** — never dump the whole blob into the conversation.
 3. **Use the Iterator lead tools** (all live in prod): `leads_summary` for the count,
    `find_leads` (`lane=direct, stage=sourced, owner=none`, ordered, `limit=10`) for the batch,
    `get_lead` for full detail, the action verbs to act. Reserve `run_sql` for the ordered id

@@ -57,57 +57,40 @@ occasional **email** lead. New feeds are additional direct **sources**, not new 
 
 ### No request given (bare `/porygon`)
 
-If `$ARGUMENTS` is empty, **orient and stop** — give a human read of the pipeline, then ask
-what they want. Orient with **aggregates**: the summary tool, plus one or two quick
-aggregation queries (`run_sql`) when they help you characterize what's actually in there.
-**Never list individual lead rows on a bare call** — a fresh import is hundreds of leads.
+If `$ARGUMENTS` is empty: **call `leads_summary` once, render it in plain language, and stop.**
+That's the whole turn. **Do not** call `describe_schema`, **do not** run `run_sql`, **do not**
+call `find_leads` or list any leads — one tool call, then a human readout and an offer. The
+extra schema-loading and aggregation is exactly the noise to avoid on a bare orient.
 
-Write it like you're briefing a colleague, not filling in a form:
+`leads_summary` already gives you everything the readout needs — `by_stage`, `to_triage`,
+`new` (count + batch), `mine` (owned/shortlist/watching), `by_source`. Turn that JSON into two
+or three sentences a colleague would say out loud:
 
-- **Open with one plain sentence** that states the real situation — the total and what's
-  actually true of it (all one stage? all one source? anything owned / shortlisted / passed?
-  how old?). No fixed template; say what's true.
-- **Then show the breakdown that's actually informative.** A per-**stage** table earns its
-  place only if leads really span stages. When the pipeline is lopsided — e.g. everything
-  sitting in `sourced` — a stage table is noise (two rows and a total tells nobody anything);
-  break down by a dimension that helps you triage instead: **industry, source, signal
-  presence, geography, launch recency**. Use a clean box table when a breakdown helps.
-- **Don't double-count or invent stages.** `to_triage` *is* the `sourced` / unclaimed leads —
-  the same leads, not a separate bucket. **Shortlist is not a stage:** a shortlisted lead
-  still sits in some stage (usually sourced or qualified), so treat shortlist as a personal
-  cut, not a pipeline segment.
-- **Interpret, then point at the usable cuts.** A line on the shape of it, then the handful of
-  slices worth acting on (the leads carrying money signals, a geographic cluster, the loud
-  launches) so they can triage by cluster, not row by row.
-- **End by asking** what they want to pull.
-
-Aim for this **tone, wrapping, and shape** — the content below is illustrative, *not* a
-required set of columns; pick whatever breakdown the actual data makes interesting:
+- **State what's actually true:** the total, whether it's all one stage / one source / one
+  import, how much you own or have shortlisted, anything past triage. `to_triage` *is* the
+  `sourced`/unclaimed set — don't double-count it as a separate bucket. Shortlist is a personal
+  cut, not a stage.
+- **Then offer the next move** — a deeper breakdown, the triage queue, or a specific slice —
+  and let the user pick. Only *then* do you spend queries.
 
 ```
-827 untriaged — that's the whole direct pipeline: every lead is sourced,
-unclaimed, and unshortlisted. Zero owned, zero passed, oldest 0 days
-(one import batch, 20260823, all YC).
+827 leads in the SF pipeline — all sourced and untriaged, one import
+(batch 20260823, all YC). You own 0, shortlisted 0; nothing's moved past triage.
 
-What's in there
-
-┌──────────────┬─────┬────────┬───────────┬──────────────┐
-│ Industry     │  n  │ signal │ 100+ votes│ launched <30d│
-├──────────────┼─────┼────────┼───────────┼──────────────┤
-│ B2B          │ 487 │   23   │    34     │     109      │
-│ Industrials  │ 130 │    6   │     7     │      40      │
-│ …            │  …  │   …    │     …     │      …       │
-└──────────────┴─────┴────────┴───────────┴──────────────┘
-
-Shape of it: ~59% B2B, tiny teams, ~194 launched in the last 30 days.
-Only 78 of 827 carry any signal — the rest are name + launch only.
-
-Worth acting on: the ~43 with money signals (Tasklet, Clara, Drafted…),
-a ~12-lead SEA cluster, and the loud-but-unannotated launches. Triage by
-cluster, not row by row.
-
-Want the money-signal cut, the SEA cluster, or a look at the raw inbox?
+Want a breakdown (by industry, or just the ones carrying signals),
+the triage queue (/tinderate), or a specific slice?
 ```
+
+**If they then ask for a breakdown**, aggregate with `run_sql` over the base tables — you do
+**not** need `describe_schema` for this, and never grep a saved describe_schema result file.
+The join you need: `lead l` (where `l.lane = 'direct'`) → `company c on c.id = l.company_id`
+for `c.industry` / `c.location` / `c.team_size`, → `person p on p.id = l.primary_contact_id`
+for the founder, and `l.lead_source` / `l.source_batch` / `l.current_stage_id` /
+`l.owner_user_id` on the lead itself. Signals/launches live in `company_signal` and
+`company_launch` (keyed by `company_id`) — only if you need those columns, glance at
+`describe_schema` **via a subagent** rather than dumping it into this conversation. Present the
+result as a compact box table + a "shape of it" line + the usable cuts (money-signal leads, a
+geo cluster, loud launches), so they triage by cluster, not row by row.
 
 ## Output discipline (lists → a markdown table, never raw JSON)
 
@@ -152,11 +135,13 @@ on `primary_contact_id`) rather than leaving the column blank.
 
 1. **Load the tools if needed.** The Iterator tools may be deferred — load them
    (e.g. `ToolSearch` for "Iterator", which surfaces the full set).
-2. **Call `describe_schema` before writing SQL.** Table/column/enum names are
-   grant-driven and not guessable.
+2. **`describe_schema` only when you actually need an unfamiliar join** — and read it **via a
+   subagent**, never dump the whole blob into the conversation or grep a saved result file.
+   The lead columns above (`lead.lane` / `company_id` / `primary_contact_id` / `lead_source` /
+   `source_batch` / `current_stage_id` / `owner_user_id`, `company.industry` / `location` /
+   `team_size`, `person.linkedin_url`) are known — use them directly, no schema call.
 3. **Use the Iterator lead tools, not guesses** — `find_leads` / `leads_summary` /
    `create_lead` / `get_lead` (all live in prod). Reserve `run_sql` for the LinkedIn join or
-   aggregation the lead tools can't express (and check `describe_schema` first for the real
-   `lead.lane` / `lead.stage` / `lead.lead_source` values before hand-writing filters).
+   aggregation the lead tools can't express.
 
 Request (if empty, follow "No request given" above — summary only, then ask): $ARGUMENTS
