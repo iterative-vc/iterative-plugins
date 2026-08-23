@@ -56,28 +56,56 @@ occasional **email** lead. New feeds are additional direct **sources**, not new 
 
 ### No request given (bare `/porygon`)
 
-If `$ARGUMENTS` is empty, **only orient, then stop and ask.** Run the pipeline **summary**
-tool once, render it as the table below, and ask what they want next. **Do NOT call
-`find_leads` / `list_leads` or dump any lead rows on a bare invocation** — a fresh import
-can be hundreds of leads, and each row is large.
+If `$ARGUMENTS` is empty, **orient and stop** — give a human read of the pipeline, then ask
+what they want. Orient with **aggregates**: the summary tool, plus one or two quick
+aggregation queries (`run_sql`) when they help you characterize what's actually in there.
+**Never list individual lead rows on a bare call** — a fresh import is hundreds of leads.
 
-Render the summary as a small table — the stage funnel first, then your personal queue and
-the triage line. Shortlist is a personal bookmark, **not** a stage, so it belongs with "your
-queue", not in the funnel:
+Write it like you're briefing a colleague, not filling in a form:
+
+- **Open with one plain sentence** that states the real situation — the total and what's
+  actually true of it (all one stage? all one source? anything owned / shortlisted / passed?
+  how old?). No fixed template; say what's true.
+- **Then show the breakdown that's actually informative.** A per-**stage** table earns its
+  place only if leads really span stages. When the pipeline is lopsided — e.g. everything
+  sitting in `sourced` — a stage table is noise (two rows and a total tells nobody anything);
+  break down by a dimension that helps you triage instead: **industry, source, signal
+  presence, geography, launch recency**. Use a clean box table when a breakdown helps.
+- **Don't double-count or invent stages.** `to_triage` *is* the `sourced` / unclaimed leads —
+  the same leads, not a separate bucket. **Shortlist is not a stage:** a shortlisted lead
+  still sits in some stage (usually sourced or qualified), so treat shortlist as a personal
+  cut, not a pipeline segment.
+- **Interpret, then point at the usable cuts.** A line on the shape of it, then the handful of
+  slices worth acting on (the leads carrying money signals, a geographic cluster, the loud
+  launches) so they can triage by cluster, not row by row.
+- **End by asking** what they want to pull.
+
+Aim for this **tone, wrapping, and shape** — the content below is illustrative, *not* a
+required set of columns; pick whatever breakdown the actual data makes interesting:
 
 ```
-SF (direct) pipeline
+827 untriaged — that's the whole direct pipeline: every lead is sourced,
+unclaimed, and unshortlisted. Zero owned, zero passed, oldest 0 days
+(one import batch, 20260823, all YC).
 
-  STAGE        LEADS
-  Sourced        827
-  Qualified        0
-  …                …          (stages in pipeline order; a Total row at the bottom)
-  Total          827
+What's in there
 
-  Your queue:  0 owned · 0 shortlisted
-  Triage:      827 to triage · newest import 20260823 (827 new)
+┌──────────────┬─────┬────────┬───────────┬──────────────┐
+│ Industry     │  n  │ signal │ 100+ votes│ launched <30d│
+├──────────────┼─────┼────────┼───────────┼──────────────┤
+│ B2B          │ 487 │   23   │    34     │     109      │
+│ Industrials  │ 130 │    6   │     7     │      40      │
+│ …            │  …  │   …    │     …     │      …       │
+└──────────────┴─────┴────────┴───────────┴──────────────┘
 
-What do you want — triage the inbox, drill into a stage, or see your own queue?
+Shape of it: ~59% B2B, tiny teams, ~194 launched in the last 30 days.
+Only 78 of 827 carry any signal — the rest are name + launch only.
+
+Worth acting on: the ~43 with money signals (Tasklet, Clara, Drafted…),
+a ~12-lead SEA cluster, and the loud-but-unannotated launches. Triage by
+cluster, not row by row.
+
+Want the money-signal cut, the SEA cluster, or a look at the raw inbox?
 ```
 
 ## Output discipline (never dump raw rows)
