@@ -56,6 +56,29 @@ If `/reload-plugins` warns that it'll re-read the conversation, run `/reload-plu
 (or just restart Claude Code). Until you reload, you keep running the version you launched
 with — so if a fix "isn't there," you probably haven't reloaded yet.
 
+### Turn on auto-update (recommended)
+
+So you don't have to run that first line every time, enable auto-update for the marketplace —
+Claude Code then pulls new versions in the background and just asks you to reload:
+
+- **Per person:** run `/plugin`, go to the **Marketplaces** tab, pick **iterative**, choose
+  **Enable auto-update**.
+- **Whole team at once (admin):** add it to managed settings so nobody has to toggle anything:
+
+  ```json
+  {
+    "extraKnownMarketplaces": {
+      "iterative": {
+        "source": { "source": "github", "repo": "iterative-vc/iterative-plugins" },
+        "autoUpdate": true
+      }
+    }
+  }
+  ```
+
+Either way you still `/reload-plugins` (or relaunch) to apply — auto-update just removes the
+manual "fetch the latest" step.
+
 ## If something isn't working
 
 - **"Unknown command" when you type `/plugin`** — you're probably in a normal terminal rather
