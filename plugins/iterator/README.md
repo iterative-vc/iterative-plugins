@@ -141,29 +141,28 @@ verbs above.
 When a fresh batch lands and you just want to clear the unclaimed inbox, `/tinderate` is a
 swipe-through triage session for the **SF (direct) `sourced`** leads — the ones nobody owns yet.
 
-**How it works.** It shows you **10 leads at a time**, in full detail, and you act by number:
+**How it works.** It shows you **10 leads at a time as a table**, and you act by number:
 
 - **Ordering** — **shortlisted-by-anyone first** (leads a teammate already flagged lead the
   queue), then the strongest by signal, rank, and launch votes. Stable, so `next` never repeats.
 - **You reply with actions** — `assign 3` (claim it → it becomes yours), `shortlist 7`,
-  `pass 2 5` (reject), or `next` for the next 10. Mix them: `assign 1 · pass 4 6 · next`.
+  `pass 2 5` (reject), `expand 4` (see one in full), or `next` for the next 10. Mix them:
+  `assign 1 · pass 4 6 · next`.
 - **The queue is live** — anything you assign or pass drops out, so `next 10` is always the
   current unclaimed set. It shrinks as you go; you're done when it's empty.
 
-**Each lead is a full card** — company (linked to its site), founder(s) with LinkedIn, the
-pitch, money/traction signals, and every launch post with its video, all clickable:
+**The batch is a scannable table** — company (linked to its site), founder (LinkedIn), focus,
+top signal, and launch (votes → post, ▶ → video), all clickable:
 
 ```
-─ 1 · ★2 · SOURCED ─────────────────────────────────
-Tasklet · B2B · San Francisco · 8 people · YC #31470
-Andrew Lee — repeat founder — LinkedIn ↗
-"AI agents that connect to your tools and run 24/7 to get real work done"
-Signals: $20M raise ($175M val) · $5M ARR (+1200% since Jan)
-Launches
-  • The cloud agent OS for knowledge work — 39 ▲ · video ↗
+| # | Company | Founder    | Focus         | Top signal          | Launch      |
+|---|---------|------------|---------------|--------------------|-------------|
+| 1 ★2 | Tasklet | Andrew Lee | B2B · SF      | $20M raise ($175M) | 39▲ · ▶     |
+| 2 | Clara   | G. Favvas  | Healthcare · SF | $12M seed        | 11▲         |
 ```
 
-(The `★2` means two people have shortlisted it — that's why it's near the top.)
+(The `★2` means two people have shortlisted it — that's why it's near the top.) Want the full
+picture on one — all founders, every launch, all signals? `expand 1` opens the full card.
 
 **Narrow the queue** by passing criteria — it still shows 10 at a time, shortlisted-first,
 within your filter:
@@ -176,7 +175,7 @@ within your filter:
 ```
 
 You start `/tinderate` deliberately (it won't fire on its own), and it only ever shows 10
-cards a turn — it never dumps the whole inbox.
+rows a turn — it never dumps the whole inbox.
 
 ## It usually knows when to check
 

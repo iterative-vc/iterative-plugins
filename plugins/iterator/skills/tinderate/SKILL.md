@@ -1,14 +1,15 @@
 ---
 name: tinderate
-description: Triage the unclaimed SF (porygon) inbox 10 at a time — full-detail cards, shortlisted-first, then assign / shortlist / pass your way through. Optional criteria narrow the queue.
+description: Triage the unclaimed SF (porygon) inbox 10 at a time — a scannable table, shortlisted-first, then assign / shortlist / pass / expand your way through. Optional criteria narrow the queue.
 argument-hint: <optional criteria to narrow the queue — e.g. "SEA", "B2B with a raise", "100+ launch votes">
 disable-model-invocation: true
 ---
 
 You are running **tinderate** — a focused triage loop over the **SF direct-deals (porygon)**
-inbox. It walks the **unclaimed `sourced`** leads **10 at a time**, in full detail, so a human
-can rapidly **assign / shortlist / pass** through them. This is a working session, not a report:
-show a batch, act on the user's calls, then show the next batch.
+inbox. It walks the **unclaimed `sourced`** leads **10 at a time** as a scannable table, so a
+human can rapidly **assign / shortlist / pass** through them (and **expand** any one for the
+full card). This is a working session, not a report: show a batch, act on the user's calls,
+then show the next batch.
 
 Query the live data with the Iterator lead tools — **never guess**.
 
@@ -32,28 +33,47 @@ Query the live data with the Iterator lead tools — **never guess**.
 
 1. **Orient (one line).** How many unclaimed sourced leads match right now, and how many of
    those are shortlisted. E.g. `312 unclaimed match "SEA" — 4 shortlisted. Here are the first 10:`
-2. **Pull the next 10** in the order above and render them as **full cards** (format below),
-   numbered `1`–`10`. Pull full detail (`get_lead`) when the list payload isn't enough.
+2. **Pull the next 10** in the order above and render them as a **table** (format below),
+   numbered `1`–`10` so the user can act by number. Keep it scannable — one row per lead.
 3. **Offer the actions**, then **stop and wait** — don't act until the user replies:
    ```
-   Reply: assign <n…> · shortlist <n…> · pass <n…> · next · or a new filter (e.g. "only SEA")
+   Reply: assign <n…> · shortlist <n…> · pass <n…> · expand <n> · next · or a new filter (e.g. "only SEA")
    ```
 4. **Apply what they say** with the verbs (assign → claim to `qualified`, you own it;
-   shortlist/unshortlist; pass → terminal). Confirm briefly what changed.
+   shortlist/unshortlist; pass → terminal). `expand <n>` shows that one lead's full card (below).
+   Confirm briefly what changed.
 5. **On `next`**, **re-query the live unclaimed set** (so anything just assigned/passed is gone)
    and show the next 10 in order. Keep going until the queue is empty or they stop.
 
-Never dump the whole inbox — **at most 10 cards per turn.** A batch can be one import of many
+Never dump the whole inbox — **at most 10 rows per turn.** A batch can be one import of many
 hundreds of leads.
 
-## Card format (one rich card per lead)
+## Batch format (a table of 10)
 
-Each lead is a **company** with **founder(s)**, **launch(es)**, and **signals** — lay it out as
-a sectioned card, not a table. **Render every URL as a clickable markdown link** (`[label](url)`),
-never bare text: the company site, each founder's LinkedIn, and each launch's post + media.
+Render the 10 as a compact **markdown table** — it renders in the terminal and scans fast for
+rapid triage. **Every URL a clickable markdown link** (`[label](url)`), never bare text:
 
 ```
-─ 1 · ★2 · SOURCED ─────────────────────────────────
+| # | Company | Founder | Focus | Top signal | Launch |
+|--:|---------|---------|-------|-----------|--------|
+| 1 ★2 | [Tasklet](https://tasklet.ai) | [Andrew Lee](https://linkedin.com/in/andrewlee) | B2B · SF | $20M raise ($175M val) | [39▲](https://www.ycombinator.com/launches/PsX-tasklet-…) · [▶](https://youtu.be/sriwtDYi6XQ) |
+| 2 | [Clara](https://askclara.com) | [George Favvas](https://linkedin.com/in/gfavvas) | Healthcare · SF | $12M seed | [11▲](https://www.ycombinator.com/launches/QMs-clara-…) |
+```
+
+- **#** — the index to act by. Append the shortlist count as **★N** when >0 (why it's near the
+  top; nothing when zero).
+- **Company** → site (`website`/`domain`); **Founder** → `person.linkedin_url`; **Launch** →
+  the top launch's votes linked to the post, plus `· [▶](video_url)` when there's media.
+- **Focus** = industry · location. **Top signal** = the single strongest — the table is a scan.
+- One line per lead. Don't wrap cells with paragraphs; that's what `expand` is for.
+
+## Expand one (the full card)
+
+On `expand <n>` (or when the user names a lead), show that single lead in full — a company with
+its **founder(s)**, all **launches**, and all **signals**:
+
+```
+─ Tasklet · ★2 · SOURCED ────────────────────────────
 **[Tasklet](https://tasklet.ai)** · B2B · San Francisco · 8 people · YC #31470
 Andrew Lee — repeat founder — [LinkedIn ↗](https://linkedin.com/in/andrewlee)
 "AI agents that connect to your tools and run 24/7 to get real work done"
@@ -62,20 +82,16 @@ Launches
   • [The cloud agent OS for knowledge work](https://www.ycombinator.com/launches/PsX-tasklet-…) — 39 ▲ · [video ↗](https://youtu.be/sriwtDYi6XQ)
 ```
 
-- **Header rule:** `─ <#> · ★<N> · <STAGE> ─…` — `<#>` is the index for acting by number,
-  `★<N>` shows the shortlist count when >0 (why it's near the top; omit the star at zero).
-- **Company line:** company name linked to its `website`/`domain`, then industry · location ·
-  team size · source (+ YC id).
-- **Founder line(s):** one per founder — name, a pedigree flag if notable (repeat founder,
-  selected-employer alum), and **[LinkedIn ↗]** linked to `person.linkedin_url`. A lead can
-  have co-founders; list each on its own line. Link LinkedIn **only when a URL exists** — never
-  invent one; omit the link if missing.
+- **Company line:** name → site, then industry · location · team size · source (+ YC id).
+- **Founder line(s):** one per founder — name, a pedigree flag if notable, and **[LinkedIn ↗]**
+  → `person.linkedin_url`. List co-founders each on their own line. Link LinkedIn **only when a
+  URL exists** — never invent one.
 - **Pitch:** the launch tagline / one-liner (skip if none).
-- **Signals:** the notable ones (raises, traction, contracts), deduped — not every row; link a
-  signal's `source_url` when useful.
-- **Launches:** list **every** launch (it's an array), each `• [tagline](launch_url) — N ▲`
-  plus `· [video ↗](video_url)` for each media; drop the video part when there's none.
-- Blank line between cards.
+- **Signals:** the notable ones (raises, traction, contracts), deduped; link a `source_url`
+  when useful.
+- **Launches:** **every** launch (it's an array), each `• [tagline](launch_url) — N ▲` plus
+  `· [video ↗](video_url)` per media; use `get_lead` for the full dossier if the batch payload
+  is thin.
 
 ## Discipline
 
