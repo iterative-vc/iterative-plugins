@@ -177,6 +177,41 @@ within your filter:
 You start `/tinderate` deliberately (it won't fire on its own), and it only ever shows 10
 rows a turn — it never dumps the whole inbox.
 
+### Score the ones waiting on you — `/score`
+
+One stage later than `/tinderate`: `/score` walks the SF leads that are **already in play and
+still need your take**, one at a time, and writes the evaluation for you.
+
+It's a **coached interview**, not a form. For each lead it shows you the **evidence first** —
+founders, launch, signals, the recent thread — and only then asks the rubric, one axis at a time:
+
+- **Founder** — how insightful / formidable does team seem
+- **Market** — how much total pain, why now, who else?
+- **Idea** — their answer, how much it relieves the pain
+- **Evidence** — proof points so far
+- **Overall** — would I invest? (`1 strong reject` → `5 strong invest`)
+
+You answer in **plain prose**; it reads you the 1 · 3 · 5 anchors, proposes a number *and* a
+drafted note back, and files nothing until you confirm. Then it hands you the console link so you
+can eyeball what landed. **There's no neutral score** — 1–2 is a reject, 3–5 is an invest, so an
+unsure reviewer has to lean. Notes are optional but they're the point: that's where "couldn't
+really assess this" gets said.
+
+A take is **per stage** — scoring a lead at `reviewing` doesn't cover it once it moves to
+`diligence`; it comes back around for a fresh take. Re-scoring the same lead at the same stage
+**edits your take in place** (there's no version history), and it'll say so before overwriting.
+
+```
+/score                            # everything waiting on you
+/score just Aster                 # one company
+/score the oldest three
+/score SEA only
+```
+
+Like `/tinderate`, you start `/score` deliberately — it won't fire on its own. It writes real
+partner judgments, so a stray invocation would file a real evaluation.
+
+
 ## It usually knows when to check
 
 You don't have to prefix everything. When a question *sounds* like a CRM or lead question —
@@ -226,6 +261,12 @@ It's reading real records and can always show its work.
 - **`skills/tinderate/SKILL.md`** — a triage loop over the unclaimed `sourced` inbox: 10
   full-detail cards at a time, shortlisted-first, then assign / shortlist / pass and `next`.
   Manual-only (`disable-model-invocation: true`) — you start a tinderate session deliberately.
+- **`skills/score/SKILL.md`** — the evaluate loop, one pipeline stage after tinderate: walks the
+  Direct leads that still need a take from you, shows the dossier **before** asking anything, then
+  coaches the founder / market / idea / evidence / recommendation rubric one axis at a time and
+  files it with `submit_lead_feedback`. Rubric copy is **verbatim** — a contract test in the app
+  repo pins those strings across the console, the DB column comments, and here. Manual-only: it
+  writes real partner judgments.
 - These ship as **skills** (not `commands/`) so each works both bare (`/porygon`) and
   namespaced (`/iterator:porygon`); a plain command only registers the namespaced form. Both
   are **model-invocable** — Claude can reach for them on its own when a question fits their
